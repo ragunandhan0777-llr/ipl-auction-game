@@ -232,6 +232,67 @@ h1.logo span{background:linear-gradient(180deg,#ffe3a1,#f7a81b);-webkit-backgrou
 .banner{background:rgba(244,63,94,.14);border:1px solid rgba(244,63,94,.5);color:#fecdd3;border-radius:14px;padding:10px 12px;font-size:13px;margin-bottom:10px;display:none}
 .banner.on{display:block}
 .av{display:block}
+
+/* ===== hub theme (dark minimal) ===== */
+:root{--bg:#08080a;--bg2:#0c0c10;--p:rgba(255,255,255,.035);--p2:rgba(255,255,255,.07);--solid:#111115;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.15);--tx:#f4f4f5;--mu:#9b9ba6;--gold:#e9c46a;--gold2:#ffe39a;--glow:0 10px 30px rgba(255,255,255,.08)}
+body{background:radial-gradient(800px 380px at 50% -10%,rgba(255,255,255,.07),transparent 60%),var(--bg)!important}
+body:before{background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px)!important}
+.big,.wbtn{background:#f4f4f5!important;color:#09090b!important;box-shadow:0 8px 24px rgba(255,255,255,.08)!important;border:0;border-radius:16px;width:100%;padding:17px;font:900 14px Inter;letter-spacing:2px;margin-top:16px;cursor:pointer}
+.wbtn:disabled{opacity:.4}
+.topnav{display:flex;justify-content:space-between;align-items:center;padding:4px 2px 0}
+.brand2{font-family:"Bebas Neue";font-size:22px;letter-spacing:1.5px}.brand2 span{color:var(--gold)}
+.livepill,.livebadge{display:inline-flex;align-items:center;gap:6px;font:800 10px Inter;letter-spacing:1.2px;color:#bbf7d0;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.35);padding:5px 10px;border-radius:999px}
+.livepill i,.livebadge i{width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;animation:blink 1.2s infinite}
+.hero2{text-align:center;padding:30px 6px 18px}
+.hero2 h1{font:300 clamp(30px,8vw,46px)/1 "Bebas Neue";letter-spacing:4px;color:#d4d4d8}
+.hero2 h1 b{display:block;font-weight:400;font-size:1.45em;color:#fff;letter-spacing:3px;margin-top:4px}
+.hero2 p{color:var(--mu);font-size:13.5px;max-width:460px;margin:12px auto 0;line-height:1.55}
+.stepsrow{display:inline-flex;align-items:center;gap:8px;margin-top:16px;border:1px solid var(--line2);border-radius:999px;padding:8px 14px;font:800 9.5px Inter;letter-spacing:1.2px;color:#d4d4d8;flex-wrap:wrap;justify-content:center}
+.stepsrow i{font-style:normal;color:var(--mu)}
+.box{background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.02));border:1px solid var(--line);border-radius:24px;padding:18px;margin-top:14px;backdrop-filter:blur(10px)}
+.boxh{display:flex;justify-content:space-between;align-items:center}
+.boxh b{font:900 15px Inter;letter-spacing:1.4px}
+.cap2{font:700 9.5px Inter;letter-spacing:1.4px;color:var(--mu);text-transform:uppercase;margin-top:12px}
+.h3{font:400 30px "Bebas Neue";letter-spacing:2px}
+.center{text-align:center;margin-bottom:12px}
+#feed .frow{display:flex;align-items:center;gap:10px;padding:10px 2px;border-bottom:1px solid var(--line);font-size:13px}
+#feed .frow:last-child{border:0}
+#feed .frow em{font-style:normal;color:var(--mu);font-size:12px}
+#feed .frow .pr{margin-left:auto;font-weight:900;font-style:italic;color:#fff}
+.htabs{display:flex;gap:18px;border-bottom:1px solid var(--line);margin:-4px 0 12px}
+.htabs button{background:none;border:0;color:var(--mu);font:900 13px Inter;letter-spacing:1.4px;padding:10px 2px;border-bottom:2px solid transparent}
+.htabs button.on{color:#fff;border-color:#fff}
+.whoami{display:flex;align-items:center;gap:10px}
+.whoami b{font:900 13px Inter;letter-spacing:1px;text-transform:uppercase}
+.whoami button{background:var(--p2);border:1px solid var(--line2);color:var(--mu);border-radius:8px;padding:5px 9px;font:800 9px Inter;letter-spacing:1px}
+.lbl2{font:900 11px Inter;letter-spacing:1.6px;margin-top:20px;color:#e4e4e7}
+.seg3,.fmt{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.seg3.two{grid-template-columns:1fr 1fr}
+.seg3 button,.fmt button{background:var(--p);border:1px solid var(--line);color:var(--tx);border-radius:14px;padding:12px 8px;text-align:left;display:flex;flex-direction:column;gap:3px}
+.seg3 button b,.fmt button b{font:900 11.5px Inter;letter-spacing:1px}
+.seg3 button small,.fmt button small{font:600 9.5px Inter;color:var(--mu);letter-spacing:.6px;text-transform:uppercase}
+.seg3 button.on,.fmt button.on{border-color:#fff;background:rgba(255,255,255,.08);position:relative}
+.seg3 button.on:after,.fmt button.on:after{content:"✓";position:absolute;top:8px;right:10px;font-size:11px}
+.fmt button:disabled{opacity:.35}
+#hubTeams{margin-top:10px;grid-template-columns:repeat(5,1fr);gap:6px}
+#hubTeams .tbtn{padding:8px 2px 7px;font-size:11px;border-radius:12px}
+#hubTeams .tbtn small{font-size:7.5px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 2px}
+#hubTeams .tbtn.on:after{width:14px;height:14px;font-size:9px;line-height:14px;top:4px;right:4px}
+#hubTeams .tbtn{background:var(--p)}
+.tog{display:flex;align-items:center;gap:12px;background:var(--p);border:1px solid var(--line);border-radius:16px;padding:13px 14px;margin-top:10px}
+.tog div{flex:1}.tog b{display:block;font:900 11.5px Inter;letter-spacing:1.2px}.tog span{display:block;color:var(--mu);font-size:11.5px;margin-top:3px}
+.tog.off{opacity:.45}
+.sw{width:46px;height:26px;border-radius:999px;border:0;background:#3f3f46;position:relative;flex:0 0 auto}
+.sw:after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .18s}
+.sw.on{background:#22c55e}.sw.on:after{left:23px}
+.prow{display:flex;align-items:center;gap:10px;background:var(--p);border:1px solid var(--line);border-radius:14px;padding:11px 12px;margin-top:8px}
+.prow div{flex:1;min-width:0}.prow b{display:block;font:900 13px Inter;letter-spacing:1px}.prow span{color:var(--mu);font-size:11.5px}
+.prow button{background:#f4f4f5;color:#09090b;border:0;border-radius:10px;padding:9px 14px;font:900 11px Inter;letter-spacing:1px}
+.hrow{display:flex;align-items:center;gap:10px;padding:11px 2px;border-bottom:1px solid var(--line)}
+.hrow:last-child{border:0}.hrow div{flex:1}.hrow b{display:block;font-size:13px}.hrow span{color:var(--mu);font-size:11.5px}
+.hrow em{font-style:normal;font:900 18px "Bebas Neue";letter-spacing:1px;color:var(--gold2)}
+.disc{color:#6b6b75;font-size:10.5px;text-align:center;margin:18px 6px 0;line-height:1.5}
+.pausebtn.on{background:#f4f4f5!important;color:#09090b!important}
 </style>
 </head>
 <body>
@@ -239,28 +300,61 @@ h1.logo span{background:linear-gradient(180deg,#ffe3a1,#f7a81b);-webkit-backgrou
 
 <!-- HOME -->
 <section class="scr on" id="s-home">
-  <div class="hero">
-    <div class="trophy-ic">🏆</div>
-    <h1 class="logo">IPL <span>AUCTION</span><br>GAME</h1>
-    <p class="tagline">Be the franchise owner. Outbid your rivals, pick your Playing XI, and top the leaderboard.</p>
-    <div class="pills"><span>359 players</span><span>3 auctions</span><span>Up to 9 players</span></div>
-    <div id="homeCrests" style="display:flex;justify-content:center;gap:4px;flex-wrap:wrap;margin-top:14px"></div>
+  <div class="topnav"><div class="brand2">🏏 IPL <span>AUCTION</span> GAME</div><span class="livepill"><i></i><b id="liveN">0</b>&nbsp;LIVE</span></div>
+  <div class="hero2">
+    <h1>CREATE YOUR<br><b>AUCTION ROOM</b></h1>
+    <p>Host live IPL auctions with friends in real time. Pick a franchise, bid smart, and build a championship squad.</p>
+    <div class="stepsrow"><span>① CREATE ROOM</span><i>➔</i><span>② INVITE FRIENDS</span><i>➔</i><span>③ START BIDDING</span></div>
   </div>
-  <div class="lbl">How do you want to play?</div>
-  <div class="cards">
-    <button class="card" data-play="single"><div class="ic">🎯</div><div><b>Single player</b><span>You vs 9 computer teams</span></div></button>
-    <button class="card" data-play="local"><div class="ic">📱</div><div><b>Pass &amp; play</b><span>2–9 friends on one phone, each with their own bid button</span></div></button>
-    <button class="card" data-play="host" id="hostCard"><div class="ic">🌐</div><div><b>Host online room</b><span id="hostSub">Create a room code. Up to 9 players join on their own phones</span></div></button>
-    <button class="card" data-play="join" id="joinCard"><div class="ic">🔑</div><div><b>Join online room</b><span id="joinSub">Enter a friend's room code</span></div></button>
+  <div class="box">
+    <div class="boxh"><b>LIVE AUCTION ACTIVITY</b><span class="livebadge"><i></i><span id="liveN2">0</span> LIVE</span></div>
+    <div class="cap2">RECENT SIGNINGS</div>
+    <div id="feed"></div>
   </div>
-  <div class="rules">
-    <b>How to play</b>
-    <div class="steps"><div><i>🔨</i>Bid on players as they come up</div><div><i>🧢</i>Pick a Playing XI + 4 subs</div><div><i>🏆</i>Strongest XI wins</div></div>
-    <p style="margin-top:10px">Tap <b>BID</b> to raise. If nobody bids for about 5 seconds it's <b>going once, going twice, SOLD!</b> Mind your purse and squad slots.</p>
+  <div class="box" id="welcome">
+    <div class="center"><div class="h3">WELCOME, MANAGER</div><div class="cap2">ENTER YOUR NAME TO OPEN THE AUCTION HUB</div></div>
+    <input class="field" id="mgrName" maxlength="14" placeholder="e.g. MS Dhoni">
+    <button class="wbtn" id="mgrGo">START AUCTION HUB ›</button>
   </div>
-  <div class="lbl">Invite friends</div>
-  <div class="share" id="homeShare"></div>
-  <p class="hint">To play online, friends need this game shared with them (use Share on the game's page) and must be signed in to Claude.</p>
+  <div class="box" id="hub" style="display:none">
+    <div class="htabs" id="htabs"><button data-h="create" class="on">CREATE</button><button data-h="join">JOIN</button><button data-h="history">HISTORY</button></div>
+    <div class="whoami"><b id="mgrShow"></b><button id="mgrChange">CHANGE</button></div>
+    <div id="h-create">
+      <div class="lbl2">AUCTION</div>
+      <div class="seg3" id="hubPool"><button data-m="mega" class="on"><b>MEGA 2025</b><small>182 players</small></button><button data-m="mini"><b>MINI 2026</b><small>Retention + RTM</small></button><button data-m="legends"><b>LEGENDS</b><small>100 retired stars</small></button></div>
+      <div class="lbl2" id="hubTeamLbl">FRANCHISE</div><div class="cap2" id="hubTeamSub">CHOOSE THE TEAM YOU'LL MANAGE.</div>
+      <div class="teamsel" id="hubTeams"></div>
+      <div class="lbl2">FORMAT</div>
+      <div class="fmt" id="hubFmt"><button data-f="mega" class="on"><b>🏆 MEGA</b><small>25 players</small><small id="fpM"></small></button><button data-f="classic"><b>☆ CLASSIC</b><small>11 players</small><small id="fpC"></small></button><button data-f="sprint"><b>⚡ SPRINT</b><small>5 players</small><small id="fpS"></small></button></div>
+      <div class="cap2" id="fmtNote" style="margin-top:6px"></div>
+      <div class="lbl2">LENGTH</div>
+      <div class="seg3 two" id="hubLen"><button data-l="quick" class="on"><b>QUICK</b><small>Top 40 players</small></button><button data-l="full"><b>FULL</b><small>Every player</small></button></div>
+      <div class="tog"><div><b>SOLO VS AI BOTS</b><span>Play instantly against computer franchises. No room code.</span></div><button class="sw on" id="swSolo" aria-label="Solo vs AI bots"></button></div>
+      <div class="tog"><div><b>PASS &amp; PLAY</b><span>2–9 friends share this phone, each with their own bid button.</span></div><button class="sw" id="swLocal" aria-label="Pass and play"></button></div>
+      <div class="tog" id="pubRow"><div><b>PUBLIC LOBBY</b><span id="pubSub">Listed under Join so anyone can discover and join your room.</span></div><button class="sw" id="swPub" aria-label="Public lobby"></button></div>
+      <div class="cap2" id="modeNote" style="margin-top:8px"></div>
+      <div class="err" id="hubErr"></div>
+      <button class="wbtn" id="hubStart">START SOLO AUCTION ›</button>
+    </div>
+    <div id="h-join" style="display:none">
+      <div class="lbl2">ROOM CODE</div>
+      <input class="field code" id="hubCode" maxlength="6" placeholder="ABC123" autocapitalize="characters">
+      <button class="wbtn" id="hubJoin">JOIN ROOM ›</button>
+      <div class="err" id="hubJoinErr"></div>
+      <div class="lbl2">PUBLIC LOBBIES</div>
+      <div id="pubList"></div>
+    </div>
+    <div id="h-history" style="display:none"><div id="histList"></div></div>
+  </div>
+  <div class="box">
+    <div class="h3" style="font-size:20px">HOW TO PLAY</div>
+    <div class="steps"><div><i>🔨</i>Bid on players as they come up</div><div><i>🧢</i>Pick a Playing XI + subs</div><div><i>🏆</i>Strongest XI wins</div></div>
+    <p class="cap2" style="margin-top:10px;text-transform:none;letter-spacing:0;font-size:12px">Tap BID to raise. If nobody bids for about 5 seconds it's going once, going twice, SOLD! Mind your purse and squad slots.</p>
+    <div class="share" id="homeShare"></div>
+    <p class="hint" id="homeHint"></p>
+  </div>
+  <p class="disc">Unofficial fan-made game, not affiliated with the BCCI, IPL or any franchise. Player portraits and team crests are original illustrations.</p>
+  <div id="homeCrests" style="display:none"></div><button id="hostCard" style="display:none"></button><button id="joinCard" style="display:none"></button><span id="hostSub" style="display:none"></span><span id="joinSub" style="display:none"></span>
 </section>
 
 <!-- SETUP -->
@@ -336,6 +430,7 @@ h1.logo span{background:linear-gradient(180deg,#ffe3a1,#f7a81b);-webkit-backgrou
   </div>
   <div class="bidbar"><div class="autoinfo" id="autoInfo"></div><div class="bids" id="bids"></div><div class="autorow" id="autoRow"></div><div class="msg" id="msg"></div></div>
   <div class="subact" id="subact">
+    <button id="pauseBtn" class="pausebtn">⏸ Pause</button>
     <button id="speedBtn">Speed: Normal</button>
     <button id="simBtn">Auto-finish auction</button>
   </div>
@@ -729,6 +824,10 @@ const MODES={
   mini:{key:"mini",name:"Mini Auction 2026",teams:IPL_TEAMS,purse:30,retain:true,rtm:true,max:25,minFill:0,minBase:0.3,interest:0.45,cap:0.4},
   legends:{key:"legends",name:"Legends Auction",teams:IPL_TEAMS,purse:5,max:15,minFill:8,minBase:0.1,interest:0.6,cap:0.22}
 };
+const FORMATS={mega:{n:"Mega",max:null,pf:1},classic:{n:"Classic",max:11,pf:0.75},sprint:{n:"Sprint",max:5,pf:0.5}};
+const MODE_CACHE={};
+function modeFor(m,f){const B=MODES[m];if(!B)return null;if(!f||f==="mega"||B.retain||!FORMATS[f])return B;const F=FORMATS[f],key=m+":"+f;
+  return MODE_CACHE[key]||(MODE_CACHE[key]={...B,name:B.name+" · "+F.n,fmt:f,max:F.max,purse:r2(B.purse*F.pf),minFill:Math.min(B.minFill,F.max-1),cap:Math.min(0.5,B.cap/F.pf)})}
 const inc=b=>b<1?0.05:b<2?0.1:b<5?0.2:b<10?0.25:b<20?0.5:1;
 const reserveFor=(M,n)=>Math.max(0,M.minFill-n-1)*M.minBase;
 const affordFor=(M,purse,n,amt)=>n<M.max&&r2(purse-amt)>=r2(reserveFor(M,n))-1e-9;
@@ -871,16 +970,18 @@ function netAvail(){
     ["hostCard","joinCard"].forEach(id=>$(id).disabled=true);
     $("hostSub").textContent=$("joinSub").textContent="Online play isn't available in this view";
   }else{["hostCard","joinCard"].forEach(id=>$(id).disabled=false)}
+  try{drawHub();drawPublic()}catch(e){}
 }
 setTimeout(()=>{if(!ROOM)netAvail()},11000);
 /* invite links: …#join-ABC123 */
 function inviteLink(code){return ART_URL+"#join-"+code}
 function checkInvite(){
   const m=/^#join-([A-Za-z0-9]{6})$/.exec(location.hash||"");if(!m)return;
-  APP.play="join";$("codeIn").value=m[1].toUpperCase();
-  try{const nk=localStorage.getItem("ipl_nick");if(nk)$("nickJoin").value=nk}catch(e){}
-  $("joinErr").textContent="";show("s-join");
-  setTimeout(()=>($("nickJoin").value?$("joinBtn"):$("nickJoin")).focus(),300);
+  const code=m[1].toUpperCase();show("s-home");
+  if(!APP.nick){UI.pendingJoin=code;$("mgrName").focus();$("welcome").querySelector(".cap2").textContent="ENTER YOUR NAME TO JOIN ROOM "+code;return}
+  hubTab("join");$("hubCode").value=code;
+  const go=()=>doJoin(APP.nick,code,$("hubJoinErr"),$("hubJoin"));
+  if(ROOM)go();else roomP.then(()=>go());
 }
 
 function show(id){document.querySelectorAll(".scr").forEach(s=>s.classList.toggle("on",s.id===id));window.scrollTo(0,0)}
@@ -925,13 +1026,13 @@ $("startBtn").onclick=()=>{
 };
 
 /* ---------- engine (runs on single / local / host) ---------- */
-function startEngine(mode,seed,len,humanCtrl){
-  const M=MODES[mode],pool=buildPool(mode,seed);
+function startEngine(mode,seed,len,humanCtrl,fmt){
+  const M=modeFor(mode,fmt),pool=buildPool(mode,seed);
   const teams={};
   allTeams(M).forEach(k=>teams[k]={k,purse:M.purse,squad:[],ctrl:humanCtrl[k]?"human":"ai",nm:humanCtrl[k]?humanCtrl[k].nm:"",peer:humanCtrl[k]?humanCtrl[k].peer:null});
   if(M.retain)allTeams(M).forEach(k=>{const tm=teams[k];tm.purse=MINI_RET[k][0];tm.squad=pool.all.filter(p=>p.ret&&p.rk===k).map(p=>({p,price:p.value,ret:true}))});
   allTeams(M).forEach(k=>teams[k].start=teams[k].purse);
-  G={M,mode,seed,pool,teams,rtmCards:M.rtm?Object.fromEntries(allTeams(M).map(k=>[k,RTM_CARDS])):null,rtm:null,idx:0,lots:len==="quick"?Math.min(40,pool.length):pool.length,log:[],speed:1,lot:null,phase:"lot",ver:0,last:null};
+  G={M,mode,fmt:fmt||"mega",seed,pool,teams,paused:false,rtmCards:M.rtm?Object.fromEntries(allTeams(M).map(k=>[k,RTM_CARDS])):null,rtm:null,idx:0,lots:len==="quick"?Math.min(40,pool.length):pool.length,log:[],speed:1,lot:null,phase:"lot",ver:0,last:null};
   UI.tab="log";
   document.querySelectorAll("#gtabs button").forEach(x=>x.classList.toggle("on",x.dataset.t==="log"));
   $("speedBtn").textContent="Speed: Normal";
@@ -982,17 +1083,25 @@ function scheduleAI(){
 }
 function aiStep(){
   const lot=G&&G.lot;if(!lot||lot.done)return;
+  if(G.paused)return;
   const np=nextPrice(lot);
   const c=Object.values(G.teams).filter(t=>bidsAuto(t)&&t.k!==lot.leader&&effMax(t,lot)>=np&&canAfford(t,np));
   if(c.length&&Math.random()<0.85)placeBid(c[Math.floor(Math.random()*c.length)].k,true);
   scheduleAI();
 }
 const HAMMER=4800;
-function engineEl(){return G&&G.lot?(performance.now()-G.lot.last)/G.speed:0}
+function engineEl(){return G&&G.lot?((G.paused?G.pausedAt:performance.now())-G.lot.last)/G.speed:0}
+function setPause(on){
+  if(!G||G.phase==="end"||G.phase==="xi"||!!on===G.paused)return;
+  const now=performance.now();
+  if(on){G.paused=true;G.pausedAt=now;clearTimeout(aiTimer)}
+  else{G.paused=false;if(G.lot)G.lot.last+=now-G.pausedAt;if(G.rtm)G.rtm.until+=now-G.pausedAt;scheduleAI()}
+  bump();
+}
 function rtmLeft(){return G&&G.rtm?Math.max(0,(G.rtm.until-performance.now())/G.speed):0}
-function engineTick(){if(G&&G.lot&&!G.lot.done&&G.phase==="lot"&&engineEl()>HAMMER)settle()}
+function engineTick(){if(G&&!G.paused&&G.lot&&!G.lot.done&&G.phase==="lot"&&engineEl()>HAMMER)settle()}
 function record(p,k,price,rtm){
-  if(k){G.teams[k].purse=r2(G.teams[k].purse-price);G.teams[k].squad.push({p,price,rtm:!!rtm})}
+  if(k){G.teams[k].purse=r2(G.teams[k].purse-price);G.teams[k].squad.push({p,price,rtm:!!rtm});pushFeed(p,k,price)}
   G.log.unshift(rtm?[p.i,k,price,1]:[p.i,k||"",k?price:0]);
 }
 /* RTM: the team that released the player may match the final bid */
@@ -1051,7 +1160,7 @@ function simSale(p,k,price){
   if(F&&bidsAuto(F)&&aiWantsRtm(F,p,price)){G.rtmCards[F.k]--;record(p,F.k,price,true)}else record(p,k,price);
 }
 function finishRest(){
-  clearTimeout(aiTimer);clearTimeout(rtmTimer);
+  clearTimeout(aiTimer);clearTimeout(rtmTimer);G.simming=true;G.paused=false;
   if(G.phase==="rtm"&&G.rtm){const R=G.rtm,F=G.teams[R.k];const use=bidsAuto(F)&&aiWantsRtm(F,G.lot.p,R.price)&&canAfford(F,R.price);if(use)G.rtmCards[R.k]--;record(G.lot.p,use?R.k:R.w,R.price,use);G.rtm=null;G.idx++;G.lot.done=true}
   if(G.lot&&!G.lot.done){G.lot.done=true;const r=resolveInstant(G.lot);simSale(G.lot.p,r.k,r.price);G.idx++}
   while(G.idx<G.pool.length){
@@ -1088,7 +1197,7 @@ const UI={tab:"log",lastVer:-1,lastPanelVer:-1,lastStampKey:""};
 function view(){
   if(NET&&NET.role==="client"){
     const st=NET.st;if(!st||!st.ph||st.ph==="lobby")return null;
-    const M=MODES[st.m];if(!M)return null;
+    const M=modeFor(st.m,st.fm);if(!M)return null;
     const pool=poolCache(st.m,st.sd);
     const teams={};
     allTeams(M).forEach(k=>{const flat=(st.sq&&st.sq[k])||[],sq=M.retain?pool.all.filter(p=>p.ret&&p.rk===k).map(p=>({p,price:p.value,ret:true})):[];for(let i=0;i+1<flat.length;i+=2)if(pool.all[flat[i]])sq.push({p:pool.all[flat[i]],price:flat[i+1]/100});
@@ -1096,13 +1205,13 @@ function view(){
     const my=allTeams(M).filter(k=>teams[k].peer&&teams[k].peer===NET.myPeer);
     const sel={};allTeams(M).forEach(k=>sel[k]={xi:(st.xs&&st.xs[k])||[],sb:(st.ss&&st.ss[k])||[],done:(st.xd||[]).includes(k)});
     const rtm=st.rt?{k:st.rt[0],w:st.rt[1],price:st.rt[2]/100,left:()=>Math.max(0,st.rt[3]-(performance.now()-NET.recvAt))}:null;
-    return{M,pool,all:pool.all,rtm,rtmCards:st.rc||null,teams,sel,idx:st.i|0,lots:st.ln|0,phase:st.ph,price:(st.pr|0)/100,leader:st.ld||null,log:(st.lg||[]),ver:st.v,my,el:()=>(st.el||0)+(performance.now()-NET.recvAt),remote:true};
+    return{paused:!!st.pz,M,pool,all:pool.all,rtm,rtmCards:st.rc||null,teams,sel,idx:st.i|0,lots:st.ln|0,phase:st.ph,price:(st.pr|0)/100,leader:st.ld||null,log:(st.lg||[]),ver:st.v,my,el:()=>(st.el||0)+(performance.now()-NET.recvAt),remote:true};
   }
   if(!G)return null;
   let my;
   if(NET&&NET.role==="host")my=Object.values(G.teams).filter(t=>t.peer==="host").map(t=>t.k);
   else my=Object.values(G.teams).filter(t=>!isAI(t)).map(t=>t.k);
-  return{M:G.M,pool:G.pool,all:G.pool.all,rtm:G.rtm?{k:G.rtm.k,w:G.rtm.w,price:G.rtm.price,left:rtmLeft}:null,rtmCards:G.rtmCards,teams:G.teams,sel:G.sel||{},idx:G.idx,lots:G.lots,phase:G.phase,price:G.lot?G.lot.price:0,leader:G.lot?G.lot.leader:null,log:G.log,ver:G.ver,my,el:engineEl,remote:false};
+  return{paused:G.paused,M:G.M,pool:G.pool,all:G.pool.all,rtm:G.rtm?{k:G.rtm.k,w:G.rtm.w,price:G.rtm.price,left:rtmLeft}:null,rtmCards:G.rtmCards,teams:G.teams,sel:G.sel||{},idx:G.idx,lots:G.lots,phase:G.phase,price:G.lot?G.lot.price:0,leader:G.lot?G.lot.leader:null,log:G.log,ver:G.ver,my,el:engineEl,remote:false};
 }
 const poolMemo={};
 function poolCache(m,sd){const k=m+":"+sd;return poolMemo[k]||(poolMemo[k]=buildPool(m,sd))}
@@ -1182,7 +1291,7 @@ function render(){
   const single=APP.play==="single"&&!NET;
   const bids=$("bids");
   bids.className="bids "+(single?"one":V.my.length>4?"many":"multi");
-  let html=V.my.map(k=>{const t=V.teams[k],T=M.teams[k];const lead=V.leader===k;const ok=V.phase==="lot"&&!lead&&affordFor(M,t.purse,t.squad.length,np);
+  let html=V.my.map(k=>{const t=V.teams[k],T=M.teams[k];const lead=V.leader===k;const ok=V.phase==="lot"&&!V.paused&&!lead&&affordFor(M,t.purse,t.squad.length,np);
     return `<button class="bidbtn ${single?"solo":""}" data-bid="${k}" ${ok?"":"disabled"} style="${single?"":`background:linear-gradient(180deg,${shade(T.c,0.15)},${shade(T.c,-0.2)});color:${T.t}`}">${single?"🔨 BID":V.my.length>4?k:"BID · "+k}<small>${lead?"Leading":t.squad.length>=M.max?"Squad full":!affordFor(M,t.purse,t.squad.length,np)?"No purse":fmt(np)}</small></button>`}).join("");
   if(single)html+=`<button class="passbtn" id="passBtn" ${V.phase==="lot"?"":"disabled"}>${V.leader===V.my[0]?"Hold":"Pass"}</button>`;
   bids.innerHTML=html;
@@ -1195,9 +1304,10 @@ function render(){
     $("autoInfo").innerHTML=`🤖 <b>AI is bidding for ${autoMine.join(", ")}</b>${idle.length?` — no bids for ${IDLE_LOTS} players in a row`:""}. It never pays more than about 10% over a player's value. Tap <b>BID</b> or turn Auto-bid off to take back control.`;
     $("autoInfo").classList.add("on");
   }else $("autoInfo").classList.remove("on");
-  $("msg").textContent="";
+  $("msg").textContent=V.paused?(V.remote?"⏸ The host paused the auction.":"⏸ Auction paused. Tap Resume to continue."):"";
   $("subact").style.display=V.remote?"none":"";
   $("speedBtn").style.display=NET?"none":"";
+  $("pauseBtn").textContent=V.paused?"▶ Resume":"⏸ Pause";$("pauseBtn").classList.toggle("on",!!V.paused);
   const nx=V.pool.slice(V.idx+1,Math.min(V.lots,V.idx+4));
   $("upNext").innerHTML=nx.length?"Up next:"+nx.map(x=>`<span style="display:inline-flex;align-items:center;gap:4px">${avatar(x,M,22)}<b>${esc(x.name)}</b></span>`).join(""):"";
   if(UI.lastPanelVer!==V.ver){UI.lastPanelVer=V.ver;panel(V)}
@@ -1235,6 +1345,7 @@ function passAction(){
   const lot=G&&G.lot;if(!lot||lot.done)return;
   const r=resolveInstant(lot);lot.leader=r.k;lot.price=r.price;settle();
 }
+$("pauseBtn").onclick=()=>{if(!G)return;setPause(!G.paused);$("pauseBtn").textContent=G.paused?"▶ Resume":"⏸ Pause";$("pauseBtn").classList.toggle("on",G.paused)};
 $("speedBtn").onclick=()=>{if(!G)return;G.speed=G.speed===1?0.5:G.speed===0.5?1.6:1;$("speedBtn").textContent="Speed: "+(G.speed===0.5?"Fast":G.speed===1?"Normal":"Slow")};
 $("simBtn").onclick=()=>$("modal").classList.add("on");
 $("mNo").onclick=()=>$("modal").classList.remove("on");
@@ -1248,6 +1359,7 @@ function loop(){
   if(V.phase==="end"||V.phase==="xi")return;
   const h=$("hammer");
   if(V.phase==="rtm"&&V.rtm){$("timerBar").style.width=Math.max(0,V.rtm.left()/RTM_MS*100)+"%";h.textContent="RTM decision…";h.className="hammer w1";return}
+  if(V.paused){h.textContent="⏸ Paused";h.className="hammer w1";return}
   const el=V.phase==="lot"?V.el():HAMMER;
   $("timerBar").style.width=Math.max(0,100-el/HAMMER*100)+"%";
   if(V.phase!=="lot"){h.textContent="";h.className="hammer"}
@@ -1348,6 +1460,7 @@ function renderEnd(V){
   else $("endTitle").textContent=my.includes(winner.k)?"Champions!":`You finished #${best}`;
   $("endSub").textContent=`${M.name} · ranked on Playing XI (full value) + subs (half value)`;
   $("lb").innerHTML=arr.map((x,i)=>{const sl=V.sel[x.t.k]||{xi:[],sb:[]};return `<div class="row ${my.includes(x.t.k)?"me":""}"><span class="rk">${i===0?"🏆":i+1}</span>${chip(M,x.t.k)}<span class="n">${esc(M.teams[x.t.k].n)}${x.t.ctrl!=="ai"?" · 👤 "+esc(x.t.nm||""):""}<br><small style="color:var(--mu)">XI ${sl.xi.length} · Subs ${sl.sb.length} · ${x.t.squad.length} in squad</small></span><span class="pr">${Math.round(x.s.xi+x.s.sb)}</span></div>`}).join("");
+  saveHistory(V,arr);
   const pod=arr.slice(0,3),ord=[1,0,2].filter(i=>pod[i]);
   $("podium").innerHTML=ord.map(i=>{const x=pod[i];return `<div class="p${i+1}"><span class="m">${["🥇","🥈","🥉"][i]}</span>${crest(M,x.t.k,i===0?52:40)}<b>${x.t.k}</b><span style="color:var(--mu);font-size:11px">${x.t.ctrl!=="ai"?"👤 "+esc(x.t.nm||""):"🤖 CPU"}</span><em>${Math.round(x.s.xi+x.s.sb)} pts</em></div>`}).join("");
   if(my.includes(winner.k))setTimeout(()=>confetti(document.querySelector("#s-end .trophy")),200);
@@ -1387,20 +1500,20 @@ $("againBtn").onclick=()=>{leaveNet();G=null;show("s-home")};
 /* ---------- online: host ---------- */
 function genCode(){const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let s="";for(let i=0;i<6;i++)s+=A[Math.floor(Math.random()*A.length)];return s}
 async function hostRoom(){
-  if(!ROOM){$("setupErr").textContent="Online play isn't available in this view.";return}
+  if(!ROOM){$("hubErr").textContent="Online play isn't available in this view.";return}
   const code=genCode();
-  $("startBtn").disabled=true;$("setupErr").textContent="Creating room…";
+  $("hubStart").disabled=true;$("hubErr").textContent="Creating room…";
   try{
     const nr=await ROOM.join("ipl-"+code.toLowerCase());
-    NET={role:"host",code,nr,mode:APP.mode,seed:(Math.random()*2**31)|0,len:APP.len,claims:{},lastSeq:{},lastAu:{},lastRt:{},unsub:null};
+    NET={role:"host",code,nr,mode:APP.mode,fmt:APP.fmt,pub:APP.pub,seed:(Math.random()*2**31)|0,len:APP.len,claims:{},lastSeq:{},lastAu:{},lastRt:{},unsub:null};
     NET.claims[APP.team]=["host",APP.nick];
     NET.unsub=nr.onPeers(onHostPeers,e=>banner("lobbyBanner","Connection lost: "+e.code));
-    $("startBtn").disabled=false;$("setupErr").textContent="";
+    $("hubStart").disabled=false;$("hubErr").textContent="";
     pushLobby();showLobby();
-  }catch(e){$("startBtn").disabled=false;$("setupErr").textContent="Couldn't create a room ("+(e&&e.code||"error")+"). Try again."}
+  }catch(e){$("hubStart").disabled=false;$("hubErr").textContent="Couldn't create a room ("+(e&&e.code||"error")+"). Try again."}
 }
-function lobbyState(){return{v:Date.now(),ph:"lobby",m:NET.mode,sd:NET.seed,ln:NET.len,cl:NET.claims,host:APP.nick}}
-function pushLobby(){if(NET&&NET.role==="host")NET.nr.presence({r:"host",st:lobbyState()}).catch(()=>{});renderLobby()}
+function lobbyState(){return{v:Date.now(),ph:"lobby",m:NET.mode,fm:NET.fmt,sd:NET.seed,ln:NET.len,cl:NET.claims,host:APP.nick}}
+function pushLobby(){if(NET&&NET.role==="host"){NET.nr.presence({r:"host",st:lobbyState()}).catch(()=>{});listRoom()}renderLobby()}
 function onHostPeers(ch){
   if(!NET||NET.role!=="host")return;
   NET.peers=ch.peers;
@@ -1464,7 +1577,7 @@ function sendHost(){
   if(!NET||NET.role!=="host"||!G)return;
   const pu={},sq={},cl={};
   Object.values(G.teams).forEach(t=>{pu[t.k]=Math.round(t.purse*100);sq[t.k]=t.squad.filter(s=>!s.ret).flatMap(s=>[s.p.i,Math.round(s.price*100)]);if(t.ctrl!=="ai")cl[t.k]=[t.peer,t.nm]});
-  const st={v:G.ver,ph:G.phase,m:G.mode,sd:G.seed,ln:G.lots,i:G.idx,pr:G.lot?Math.round(G.lot.price*100):0,ld:G.lot&&G.lot.leader||"",el:Math.round(engineEl()),pu,sq,cl,lg:G.log.slice(0,6).map(([pi,k,p,r])=>r?[pi,k,Math.round(p*100),1]:[pi,k,Math.round(p*100)])};
+  const st={v:G.ver,fm:G.fmt,pz:G.paused?1:0,ph:G.phase,m:G.mode,sd:G.seed,ln:G.lots,i:G.idx,pr:G.lot?Math.round(G.lot.price*100):0,ld:G.lot&&G.lot.leader||"",el:Math.round(engineEl()),pu,sq,cl,lg:G.log.slice(0,6).map(([pi,k,p,r])=>r?[pi,k,Math.round(p*100),1]:[pi,k,Math.round(p*100)])};
   if(G.rtmCards)st.rc=G.rtmCards;
   if(G.rtm)st.rt=[G.rtm.k,G.rtm.w,Math.round(G.rtm.price*100),Math.round(rtmLeft())];
   const au={};Object.values(G.teams).forEach(t=>{if(t.auto)au[t.k]=t.autoWhy==="idle"?"i":"m"});if(Object.keys(au).length)st.au=au;
@@ -1474,30 +1587,33 @@ function sendHost(){
 $("lobbyStart").onclick=()=>{
   if(!NET||NET.role!=="host")return;
   const ctrl={};for(const k in NET.claims)ctrl[k]={peer:NET.claims[k][0],nm:NET.claims[k][1]};
-  startEngine(NET.mode,NET.seed,NET.len,ctrl);
+  startEngine(NET.mode,NET.seed,NET.len,ctrl,NET.fmt);unlist();
   clearInterval(pushIv);pushIv=setInterval(sendHost,1000);
   sendHost();
 };
 
 /* ---------- online: client ---------- */
-$("joinBtn").onclick=async()=>{
-  const nk=cleanNick($("nickJoin").value),code=($("codeIn").value||"").toUpperCase().replace(/[^A-Z0-9]/g,"");
-  if(!nk){$("joinErr").textContent="Enter your name.";return}
-  if(code.length!==6){$("joinErr").textContent="Room codes have 6 characters.";return}
+$("joinBtn").onclick=()=>doJoin(cleanNick($("nickJoin").value),$("codeIn").value,$("joinErr"),$("joinBtn"));
+$("hubJoin").onclick=()=>doJoin(APP.nick,$("hubCode").value,$("hubJoinErr"),$("hubJoin"));
+async function doJoin(nk,codeIn,errEl,btn){
+  const code=(codeIn||"").toUpperCase().replace(/[^A-Z0-9]/g,"");
+  const E=errEl;
+  if(!nk){E.textContent="Enter your name.";return}
+  if(code.length!==6){E.textContent="Room codes have 6 characters.";return}
   try{localStorage.setItem("ipl_nick",nk)}catch(e){}
-  if(!ROOM){$("joinErr").textContent="Online play isn't available in this view.";return}
-  $("joinErr").textContent="Joining…";$("joinBtn").disabled=true;
+  if(!ROOM){E.textContent="Online play isn't available in this view.";return}
+  E.textContent="Joining…";btn.disabled=true;
   try{
     const nr=await ROOM.join("ipl-"+code.toLowerCase());
     APP.nick=nk;
     NET={role:"client",code,nr,st:null,recvAt:0,myPeer:null,seq:0,want:null,sawHost:false};
     await nr.presence({r:"pl",nm:nk,tk:null});
     NET.unsub=nr.onPeers(onClientPeers,e=>banner("gameBanner","Connection lost: "+e.code));
-    $("joinBtn").disabled=false;$("joinErr").textContent="";
+    btn.disabled=false;E.textContent="";
     showLobby();
     setTimeout(()=>{if(NET&&NET.role==="client"&&!NET.sawHost)banner("lobbyBanner","No host found in room "+code+" yet. Check the code, or wait for the host.")},6000);
-  }catch(e){$("joinBtn").disabled=false;$("joinErr").textContent="Couldn't join ("+(e&&e.code||"error")+")."}
-};
+  }catch(e){btn.disabled=false;E.textContent="Couldn't join ("+(e&&e.code||"error")+")."}
+}
 function onClientPeers(ch){
   if(!NET||NET.role!=="client")return;
   NET.peers=ch.peers;
@@ -1524,7 +1640,7 @@ function renderLobby(){
   $("lobbyStart").style.display=host?"":"none";
   $("lobbyWait").style.display=host?"none":"";
   if(!st){$("lobbyMode").textContent="Connecting to host…";$("lobbyTeams").innerHTML="";$("lobbyPeople").innerHTML="";return}
-  const M=MODES[st.m];
+  const M=modeFor(st.m,st.fm);
   $("lobbyMode").textContent=`${M.name} · ${st.ln==="quick"?"Quick (40 lots)":"Full"} · Host: ${st.host||""} · ${Object.keys(st.cl||{}).length}/${Math.min(MAXH,Object.keys(M.teams).length)} players`;
   const cl=st.cl||{};
   const myKey=host?"host":NET.myPeer;
@@ -1552,15 +1668,146 @@ $("lobbyTeams").onclick=e=>{
 $("lobbyLeave").onclick=()=>{leaveNet();show("s-home")};
 function banner(id,txt){const b=$(id);b.textContent=txt;b.classList.add("on")}
 function leaveNet(){
-  clearInterval(pushIv);pushIv=null;
+  clearInterval(pushIv);pushIv=null;unlist();
   if(NET){try{NET.unsub&&NET.unsub()}catch(e){}try{NET.nr.leave()}catch(e){}}
   NET=null;["lobbyBanner","gameBanner"].forEach(id=>$(id).classList.remove("on"));
   if(G&&G.phase!=="end"){clearTimeout(aiTimer);G=null}
 }
 
 $("homeCrests").innerHTML=Object.keys(IPL_TEAMS).map(k=>crest(MODES.mega,k,30)).join("");
+$("homeHint").textContent=IN_CLAUDE?"To play online here, friends need this game shared with them and must be signed in to Claude.":"Friends can open the link on any phone. No login needed.";
 $("homeShare").innerHTML=shareHTML(`🏏 Let's play the IPL Auction Game! Bid for players, build your Playing XI and beat me on the leaderboard:\n${ART_URL}`);
+/* ================= HUB ================= */
+APP.fmt="mega";APP.solo=true;APP.local=false;APP.pub=false;
+try{APP.nick=localStorage.getItem("ipl_nick")||""}catch(e){}
+const shortName=n=>{const w=n.split(" ");return w.length>1?w[0][0]+". "+w.slice(1).join(" "):n};
+function showHub(){
+  const has=!!APP.nick;
+  $("welcome").style.display=has?"none":"";$("hub").style.display=has?"":"none";
+  $("mgrShow").textContent=APP.nick;
+  drawHub();
+}
+$("mgrGo").onclick=()=>{const nk=cleanNick($("mgrName").value);if(!nk){$("mgrName").focus();return}APP.nick=nk;try{localStorage.setItem("ipl_nick",nk)}catch(e){}showHub();if(UI.pendingJoin){hubTab("join");$("hubCode").value=UI.pendingJoin;const c=UI.pendingJoin;UI.pendingJoin=null;doJoin(APP.nick,c,$("hubJoinErr"),$("hubJoin"))}};
+$("mgrName").addEventListener("keydown",e=>{if(e.key==="Enter")$("mgrGo").click()});
+$("mgrChange").onclick=()=>{$("mgrName").value=APP.nick;APP.nick="";showHub();$("mgrName").focus()};
+function hubTab(h){document.querySelectorAll("#htabs button").forEach(b=>b.classList.toggle("on",b.dataset.h===h));["create","join","history"].forEach(x=>$("h-"+x).style.display=x===h?"":"none");if(h==="history")drawHistory();if(h==="join")drawPublic()}
+$("htabs").onclick=e=>{const b=e.target.closest("button");if(b)hubTab(b.dataset.h)};
+$("hubPool").onclick=e=>{const b=e.target.closest("button");if(!b)return;APP.mode=b.dataset.m;drawHub()};
+$("hubFmt").onclick=e=>{const b=e.target.closest("button");if(!b||b.disabled)return;APP.fmt=b.dataset.f;drawHub()};
+$("hubLen").onclick=e=>{const b=e.target.closest("button");if(!b)return;APP.len=b.dataset.l;drawHub()};
+$("swSolo").onclick=()=>{APP.solo=!APP.solo;if(APP.solo)APP.local=false;drawHub()};
+$("swLocal").onclick=()=>{APP.local=!APP.local;if(APP.local)APP.solo=false;drawHub()};
+$("swPub").onclick=()=>{if(APP.solo||APP.local||!HUB_OK())return;APP.pub=!APP.pub;drawHub()};
+$("hubTeams").onclick=e=>{const b=e.target.closest(".tbtn");if(!b)return;const k=b.dataset.k,M=MODES[APP.mode],mx=Math.min(MAXH,Object.keys(M.teams).length);
+  if(APP.local){if(APP.humans.has(k)){if(APP.humans.size>2)APP.humans.delete(k)}else if(APP.humans.size<mx)APP.humans.add(k)}else APP.team=k;drawHub()};
+const HUB_OK=()=>!!(ROOM&&ROOM.relay);
+function drawHub(){
+  const M=MODES[APP.mode],T=M.teams,ks=Object.keys(T);
+  if(!T[APP.team])APP.team=ks[0];
+  APP.humans=new Set([...APP.humans].filter(k=>T[k]));if(APP.humans.size<2)APP.humans=new Set(ks.slice(0,2));
+  if(M.retain)APP.fmt="mega";
+  document.querySelectorAll("#hubPool button").forEach(b=>b.classList.toggle("on",b.dataset.m===APP.mode));
+  document.querySelectorAll("#hubFmt button").forEach(b=>{b.classList.toggle("on",b.dataset.f===APP.fmt);b.disabled=!!M.retain&&b.dataset.f!=="mega"});
+  $("fpM").textContent="₹"+M.purse+" Cr";$("fpC").textContent="₹"+r2(M.purse*.75)+" Cr";$("fpS").textContent="₹"+r2(M.purse*.5)+" Cr";
+  if(M.retain){$("fpM").textContent="Real purses";$("fpC").textContent="—";$("fpS").textContent="—"}
+  $("fmtNote").textContent=M.retain?"Mini auction uses real retained squads, so only the Mega format applies.":"";
+  document.querySelectorAll("#hubLen button").forEach(b=>b.classList.toggle("on",b.dataset.l===APP.len));
+  $("swSolo").classList.toggle("on",APP.solo);$("swLocal").classList.toggle("on",APP.local);
+  const online=!APP.solo&&!APP.local;
+  $("swPub").classList.toggle("on",online&&APP.pub);$("pubRow").classList.toggle("off",!online||!HUB_OK());
+  $("pubSub").textContent=!HUB_OK()?(IN_CLAUDE?"Public lobbies work on the website version of the game.":"Connecting…"):online?"Listed under Join so anyone can discover and join your room.":"Turn off Solo and Pass & play to host an online room.";
+  const mx=Math.min(MAXH,ks.length);
+  $("hubTeamLbl").textContent=APP.local?"HUMAN FRANCHISES":"FRANCHISE";
+  $("hubTeamSub").textContent=APP.local?`PICK 2–${mx} TEAMS FOR THE PLAYERS ON THIS PHONE (${APP.humans.size} PICKED).`:"CHOOSE THE TEAM YOU'LL MANAGE.";
+  $("hubTeams").innerHTML=ks.map(k=>{const t=T[k],on=APP.local?APP.humans.has(k):k===APP.team,R=M.retain?MINI_RET[k]:null;
+    return `<button class="tbtn ${on?"on":""}" data-k="${k}" style="--tc:${t.c}">${crest(M,k,34)}${k}<small>${R?`₹${R[0]} Cr · ${R[1].split(";").length} kept`:esc(t.n)}</small></button>`}).join("");
+  $("hubStart").textContent=APP.solo?"START SOLO AUCTION ›":APP.local?"START PASS & PLAY ›":"CREATE ROOM ›";
+  $("modeNote").textContent=online?(ROOM?"You'll get a room code and an invite link to share. Unclaimed teams are played by AI.":"Online rooms aren't available here."):"";
+}
+$("hubStart").onclick=()=>{
+  $("hubErr").textContent="";
+  const seed=(Math.random()*2**31)|0;
+  if(APP.solo){APP.play="single";startEngine(APP.mode,seed,APP.len,{[APP.team]:{nm:"You"}},APP.fmt);return}
+  if(APP.local){APP.play="local";const ctrl={};APP.humans.forEach(k=>ctrl[k]={nm:k});startEngine(APP.mode,seed,APP.len,ctrl,APP.fmt);return}
+  APP.play="host";hostRoom();
+};
+
+/* ---- live hub over MQTT (website only) ---- */
+let HUB=null,LIST=null;const HUBD={rooms:{},feed:[]};
+const HBASE="iplauctiongame/v2/hub/";
+async function hubConnect(){
+  if(IN_CLAUDE||!("WebSocket" in window))return;
+  try{if(!window.mqtt)await loadScript(MQTT_SRC)}catch(e){return}
+  for(const url of BROKERS){
+    try{
+      HUB=await new Promise((res,rej)=>{const c=window.mqtt.connect(url,{clientId:"h"+Math.random().toString(36).slice(2,10),clean:true,connectTimeout:7000,reconnectPeriod:4000});
+        const to=setTimeout(()=>{c.end(true);rej()},8000);c.once("connect",()=>{clearTimeout(to);res(c)});c.once("error",()=>{clearTimeout(to);c.end(true);rej()})});
+      break;
+    }catch(e){HUB=null}
+  }
+  if(!HUB)return;
+  HUB.on("message",(topic,buf)=>{
+    const s=buf.toString();
+    if(topic===HBASE+"feed"){try{const a=JSON.parse(s);if(Array.isArray(a))HUBD.feed=a.slice(0,10)}catch(e){}drawFeed();return}
+    if(topic.startsWith(HBASE+"public/")){const c=topic.slice((HBASE+"public/").length);if(!s)delete HUBD.rooms[c];else{try{const o=JSON.parse(s);if(o&&typeof o==="object")HUBD.rooms[c]=o}catch(e){}}drawLive();drawPublic()}
+  });
+  HUB.subscribe([HBASE+"feed",HBASE+"public/+"],{qos:0});
+  drawHub();
+}
+function liveRooms(){const now=Date.now();return Object.entries(HUBD.rooms).filter(([c,o])=>o&&now-(o.t||0)<180000&&/^[A-Z0-9]{6}$/.test(c))}
+function drawLive(){const n=liveRooms().length;$("liveN").textContent=n;$("liveN2").textContent=n}
+function drawFeed(){
+  const F=HUBD.feed;
+  $("feed").innerHTML=F.length?F.map(x=>{const M=MODES[x.m]||MODES.mega;const k=String(x.k||"").slice(0,4);if(!M.teams[k])return"";return `<div class="frow">${crest(M,k,22)}<b>${esc(k)}</b><em>signed</em><b>${esc(String(x.n||"").slice(0,30))}</b><span class="pr">${fmt(+x.p||0)}</span></div>`}).join(""):`<div class="cap2" style="text-transform:none;letter-spacing:0;font-size:12px">${IN_CLAUDE?"Signings from your auctions will appear here.":"Waiting for the next signing…"}</div>`;
+}
+function pushFeed(p,k,price){
+  if(!G||G.simming)return;
+  const e={m:G.mode,k,n:shortName(p.name),p:price};
+  HUBD.feed=[e,...HUBD.feed].slice(0,10);drawFeed();
+  if(HUB&&HUB.connected)HUB.publish(HBASE+"feed",JSON.stringify(HUBD.feed),{retain:true,qos:0});
+}
+function drawPublic(){
+  const L=liveRooms().filter(([c,o])=>!o.s);
+  $("pubList").innerHTML=!HUB_OK()?`<div class="cap2" style="text-transform:none;letter-spacing:0;font-size:12px">${IN_CLAUDE?"Public lobbies are available on the website version of the game.":"Connecting…"}</div>`
+    :L.length?L.map(([c,o])=>`<div class="prow"><div><b>${esc(c)} · ${esc(String(o.h||"").slice(0,14))}</b><span>${esc(String(o.m||"").slice(0,40))} · ${+o.n||1}/${+o.x||9} players</span></div><button data-pj="${esc(c)}">JOIN</button></div>`).join("")
+    :`<div class="cap2" style="text-transform:none;letter-spacing:0;font-size:12px">No public rooms right now. Create one and switch on Public lobby.</div>`;
+}
+$("pubList").onclick=e=>{const b=e.target.closest("[data-pj]");if(!b)return;$("hubCode").value=b.dataset.pj;doJoin(APP.nick,b.dataset.pj,$("hubJoinErr"),$("hubJoin"))};
+let listIv=null;
+async function listRoom(){
+  if(!NET||NET.role!=="host"||!NET.pub||!HUB_OK())return;
+  const topic=HBASE+"public/"+NET.code;
+  if(!LIST){
+    try{
+      LIST=await new Promise((res,rej)=>{const c=window.mqtt.connect(BROKERS[0],{clientId:"l"+Math.random().toString(36).slice(2,10),clean:true,connectTimeout:7000,reconnectPeriod:4000,will:{topic,payload:"",retain:true,qos:1}});
+        const to=setTimeout(()=>{c.end(true);rej()},8000);c.once("connect",()=>{clearTimeout(to);res(c)});c.once("error",()=>{clearTimeout(to);c.end(true);rej()})});
+      LIST.topic=topic;
+    }catch(e){LIST=null;return}
+  }
+  const M=modeFor(NET.mode,NET.fmt);
+  LIST.publish(topic,JSON.stringify({h:APP.nick,m:M.name,n:Object.keys(NET.claims).length,x:Math.min(MAXH,Object.keys(M.teams).length),t:Date.now()}),{retain:true,qos:1});
+  clearInterval(listIv);listIv=setInterval(()=>{if(NET&&NET.role==="host"&&!G)listRoom()},60000);
+}
+function unlist(){clearInterval(listIv);if(LIST){try{LIST.publish(LIST.topic,"",{retain:true,qos:1});const L=LIST;setTimeout(()=>L.end(),500)}catch(e){}LIST=null}}
+
+/* ---- history ---- */
+function saveHistory(V,arr){
+  const key=(V.remote?NET&&NET.st&&NET.st.sd:G&&G.seed)+":"+V.M.name;
+  let H=[];try{H=JSON.parse(localStorage.getItem("ipl_hist")||"[]")}catch(e){}
+  if(H.some(h=>h.key===key))return;
+  const mine=V.my.map(k=>({k,r:arr.findIndex(x=>x.t.k===k)+1,p:Math.round(arr.find(x=>x.t.k===k).s.xi+arr.find(x=>x.t.k===k).s.sb)}));
+  H.unshift({key,t:Date.now(),m:V.M.name,mk:V.M.key,w:arr[0].t.k,n:arr.length,mine,on:!!NET});
+  try{localStorage.setItem("ipl_hist",JSON.stringify(H.slice(0,25)))}catch(e){}
+}
+function drawHistory(){
+  let H=[];try{H=JSON.parse(localStorage.getItem("ipl_hist")||"[]")}catch(e){}
+  $("histList").innerHTML=H.length?H.map(h=>{const M=MODES[h.mk]||MODES.mega;const m=h.mine[0];const d=new Date(h.t);
+    return `<div class="hrow">${m?crest(M,m.k,30):crest(M,h.w,30)}<div><b>${esc(h.m)}${h.on?" · Online":""}</b><span>${d.toLocaleDateString()} · ${m?`${h.mine.map(x=>x.k+" #"+x.r).join(", ")}`:"Watched"} · Winner ${esc(h.w)}</span></div><em>${m?(m.r===1?"🏆 ":"")+m.p:""}</em></div>`}).join("")
+    :`<div class="cap2" style="text-transform:none;letter-spacing:0;font-size:12px">Your finished auctions will appear here.</div>`;
+}
+
 drawTeamSel();
+showHub();drawFeed();drawLive();hubConnect();
 checkInvite();window.addEventListener("hashchange",checkInvite);
 </script>
 </body>
