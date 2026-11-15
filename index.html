@@ -291,6 +291,12 @@ body:before{background-image:linear-gradient(rgba(255,255,255,.03) 1px,transpare
 .hrow{display:flex;align-items:center;gap:10px;padding:11px 2px;border-bottom:1px solid var(--line)}
 .hrow:last-child{border:0}.hrow div{flex:1}.hrow b{display:block;font-size:13px}.hrow span{color:var(--mu);font-size:11.5px}
 .hrow em{font-style:normal;font:900 18px "Bebas Neue";letter-spacing:1px;color:var(--gold2)}
+.srvgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:10px}
+.srvgrid button{background:var(--p);border:1px solid var(--line);color:var(--tx);border-radius:12px;padding:9px 2px 7px;display:flex;flex-direction:column;align-items:center;gap:3px;font:900 10px Inter;letter-spacing:.8px}
+.srvgrid button.on{border-color:#fff;background:rgba(255,255,255,.1)}
+.srvgrid small{font:700 8.5px Inter;color:var(--mu);display:flex;align-items:center;gap:3px;letter-spacing:0}
+.srvgrid i{width:6px;height:6px;border-radius:50%;background:#52525b;display:inline-block}
+.srvgrid i.ok{background:#22c55e;box-shadow:0 0 6px #22c55e}.srvgrid i.slow{background:#eab308}.srvgrid i.down{background:#ef4444}
 .disc{color:#6b6b75;font-size:10.5px;text-align:center;margin:18px 6px 0;line-height:1.5}
 .pausebtn.on{background:#f4f4f5!important;color:#09090b!important}
 </style>
@@ -317,6 +323,11 @@ body:before{background-image:linear-gradient(rgba(255,255,255,.03) 1px,transpare
     <button class="wbtn" id="mgrGo">START AUCTION HUB ›</button>
   </div>
   <div class="box" id="hub" style="display:none">
+    <div id="srvBox" style="display:none;margin-bottom:14px">
+      <div class="lbl2" style="margin-top:0">AUCTION SERVER</div>
+      <div class="cap2" style="margin-top:4px">Lobbies and public rooms are separate per server. Friends must pick the same server, or use your invite link.</div>
+      <div class="srvgrid" id="srvGrid"></div>
+    </div>
     <div class="htabs" id="htabs"><button data-h="create" class="on">CREATE</button><button data-h="join">JOIN</button><button data-h="history">HISTORY</button></div>
     <div class="whoami"><b id="mgrShow"></b><button id="mgrChange">CHANGE</button></div>
     <div id="h-create">
@@ -912,15 +923,27 @@ let roomP=null, ROOM=null;
 const IN_CLAUDE=!!(window.claude&&typeof window.claude.use==="function");
 /* Outside Claude (e.g. GitHub Pages) online rooms run over a free public MQTT relay.
    Each player's state is a retained message; the broker's "last will" clears it when they disconnect. */
-const BROKERS=window.__BROKERS||["wss://broker.emqx.io:8084/mqtt","wss://broker.hivemq.com:8884/mqtt"];
+/* 4 independent public relay networks, shared out as 10 servers (each server = its own namespace + preferred network) */
+const NETS=window.__BROKERS?window.__BROKERS.map((u,i)=>({id:"t"+i,n:"Test "+i,url:u})):[
+  {id:"eu",n:"EMQX Global",url:"wss://broker.emqx.io:8084/mqtt"},
+  {id:"hq",n:"HiveMQ",url:"wss://broker.hivemq.com:8884/mqtt"},
+  {id:"mo",n:"Mosquitto",url:"wss://test.mosquitto.org:8081/mqtt"},
+  {id:"cn",n:"EMQX Asia",url:"wss://broker-cn.emqx.io:8084/mqtt"}];
+const BROKERS=NETS.map(x=>x.url);
+const SERVERS=Array.from({length:10},(_,i)=>({n:i+1,net:i%NETS.length}));
+const NETSTAT={};
+function brokerOrder(srv){const s=SERVERS[(srv||1)-1]||SERVERS[0];const o=[s.net];NETS.forEach((_,i)=>{if(i!==s.net)o.push(i)});return o.map(i=>NETS[i].url)}
+const NS=srv=>"s"+(srv||1);
+let SRV=1;try{SRV=Math.min(10,Math.max(1,+localStorage.getItem("ipl_srv")||1))}catch(e){}
 const MQTT_SRC=window.__MQTT_SRC||"https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js";
 function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=()=>rej(new Error("load"));document.head.appendChild(s)})}
-async function mqttJoin(name){
+async function mqttJoin(name,opts){
+  opts=opts||{};const srv=opts.srv||SRV,urls=opts.urls||brokerOrder(srv);
   if(!window.mqtt)await loadScript(MQTT_SRC);
   const me="c"+Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4);
-  const base="iplauctiongame/v2/"+name+"/p/";
+  const base="iplauctiongame/v3/"+NS(srv)+"/"+name+"/p/";let usedUrl=null;
   let client=null;
-  for(const url of BROKERS){
+  for(const url of urls){
     try{
       client=await new Promise((res,rej)=>{
         const c=window.mqtt.connect(url,{clientId:me,clean:true,connectTimeout:7000,reconnectPeriod:2500,keepalive:20,will:{topic:base+me,payload:"",retain:true,qos:1}});
@@ -928,7 +951,7 @@ async function mqttJoin(name){
         c.once("connect",()=>{clearTimeout(to);res(c)});
         c.once("error",e=>{clearTimeout(to);c.end(true);rej(e)});
       });
-      break;
+      usedUrl=url;break;
     }catch(e){client=null}
   }
   if(!client)throw{code:"upstream_error"};
@@ -952,7 +975,7 @@ async function mqttJoin(name){
   client.on("connect",()=>{publish();conn.forEach(f=>f(true))});
   client.on("offline",()=>conn.forEach(f=>f(false)));
   await new Promise(res=>client.subscribe(base+"+",{qos:1},()=>res()));
-  return{name,
+  return{name,url:usedUrl,srv,
     presence:async(patch)=>{const next={...mine};for(const k in patch){if(patch[k]===null)delete next[k];else next[k]=patch[k]}
       const s=JSON.stringify(next);if(s.length>60000)throw{code:"invalid_argument"};mine=next;
       members.set(me,{presence:Object.freeze(JSON.parse(s)),updatedAt:Date.now()});pending.updated.add(me);schedule();
@@ -970,14 +993,15 @@ function netAvail(){
     ["hostCard","joinCard"].forEach(id=>$(id).disabled=true);
     $("hostSub").textContent=$("joinSub").textContent="Online play isn't available in this view";
   }else{["hostCard","joinCard"].forEach(id=>$(id).disabled=false)}
-  try{drawHub();drawPublic()}catch(e){}
+  try{drawHub();drawPublic();drawServers()}catch(e){}
 }
 setTimeout(()=>{if(!ROOM)netAvail()},11000);
 /* invite links: …#join-ABC123 */
-function inviteLink(code){return ART_URL+"#join-"+code}
+function inviteLink(code){return ART_URL+"#join-"+code+(ROOM&&ROOM.relay&&NET&&NET.srv?"-"+NET.srv:"")}
 function checkInvite(){
-  const m=/^#join-([A-Za-z0-9]{6})$/.exec(location.hash||"");if(!m)return;
+  const m=/^#join-([A-Za-z0-9]{6})(?:-(\d{1,2}))?$/.exec(location.hash||"");if(!m)return;
   const code=m[1].toUpperCase();show("s-home");
+  if(m[2]&&+m[2]>=1&&+m[2]<=10&&+m[2]!==SRV)setServer(+m[2]);
   if(!APP.nick){UI.pendingJoin=code;$("mgrName").focus();$("welcome").querySelector(".cap2").textContent="ENTER YOUR NAME TO JOIN ROOM "+code;return}
   hubTab("join");$("hubCode").value=code;
   const go=()=>doJoin(APP.nick,code,$("hubJoinErr"),$("hubJoin"));
@@ -1504,8 +1528,8 @@ async function hostRoom(){
   const code=genCode();
   $("hubStart").disabled=true;$("hubErr").textContent="Creating room…";
   try{
-    const nr=await ROOM.join("ipl-"+code.toLowerCase());
-    NET={role:"host",code,nr,mode:APP.mode,fmt:APP.fmt,pub:APP.pub,seed:(Math.random()*2**31)|0,len:APP.len,claims:{},lastSeq:{},lastAu:{},lastRt:{},unsub:null};
+    const nr=await ROOM.join("ipl-"+code.toLowerCase(),{srv:SRV});
+    NET={role:"host",srv:SRV,code,nr,mode:APP.mode,fmt:APP.fmt,pub:APP.pub,seed:(Math.random()*2**31)|0,len:APP.len,claims:{},lastSeq:{},lastAu:{},lastRt:{},unsub:null};
     NET.claims[APP.team]=["host",APP.nick];
     NET.unsub=nr.onPeers(onHostPeers,e=>banner("lobbyBanner","Connection lost: "+e.code));
     $("hubStart").disabled=false;$("hubErr").textContent="";
@@ -1603,16 +1627,23 @@ async function doJoin(nk,codeIn,errEl,btn){
   try{localStorage.setItem("ipl_nick",nk)}catch(e){}
   if(!ROOM){E.textContent="Online play isn't available in this view.";return}
   E.textContent="Joining…";btn.disabled=true;
-  try{
-    const nr=await ROOM.join("ipl-"+code.toLowerCase());
+  const relay=!!ROOM.relay,urls=relay?brokerOrder(SRV):[null];let lastErr=null,joined=false;
+  for(let a=0;a<urls.length;a++){
+    let nr;
+    try{nr=await ROOM.join("ipl-"+code.toLowerCase(),relay?{srv:SRV,urls:[urls[a]]}:undefined)}catch(e){lastErr=e;continue}
     APP.nick=nk;
-    NET={role:"client",code,nr,st:null,recvAt:0,myPeer:null,seq:0,want:null,sawHost:false};
-    await nr.presence({r:"pl",nm:nk,tk:null});
+    NET={role:"client",srv:SRV,code,nr,st:null,recvAt:0,myPeer:null,seq:0,want:null,sawHost:false};
+    try{await nr.presence({r:"pl",nm:nk,tk:null})}catch(e){}
     NET.unsub=nr.onPeers(onClientPeers,e=>banner("gameBanner","Connection lost: "+e.code));
-    btn.disabled=false;E.textContent="";
-    showLobby();
-    setTimeout(()=>{if(NET&&NET.role==="client"&&!NET.sawHost)banner("lobbyBanner","No host found in room "+code+" yet. Check the code, or wait for the host.")},6000);
-  }catch(e){btn.disabled=false;E.textContent="Couldn't join ("+(e&&e.code||"error")+")."}
+    if(!joined){btn.disabled=false;E.textContent="";showLobby();joined=true}
+    if(!relay||a===urls.length-1)break;
+    const t0=Date.now();while(NET&&NET.role==="client"&&!NET.sawHost&&Date.now()-t0<5500)await new Promise(r=>setTimeout(r,200));
+    if(!NET||NET.role!=="client"||NET.sawHost)break;
+    $("lobbyMode").textContent="Looking for the host on another network…";
+    try{NET.unsub&&NET.unsub()}catch(e){}try{await nr.leave()}catch(e){}NET=null;
+  }
+  if(!joined){btn.disabled=false;E.textContent="Couldn't join ("+(lastErr&&lastErr.code||"no server reachable")+").";return}
+  setTimeout(()=>{if(NET&&NET.role==="client"&&!NET.sawHost)banner("lobbyBanner","No host found in room "+code+" on Server "+SRV+". Check the code and server, or wait for the host.")},1500);
 }
 function onClientPeers(ch){
   if(!NET||NET.role!=="client")return;
@@ -1641,7 +1672,7 @@ function renderLobby(){
   $("lobbyWait").style.display=host?"none":"";
   if(!st){$("lobbyMode").textContent="Connecting to host…";$("lobbyTeams").innerHTML="";$("lobbyPeople").innerHTML="";return}
   const M=modeFor(st.m,st.fm);
-  $("lobbyMode").textContent=`${M.name} · ${st.ln==="quick"?"Quick (40 lots)":"Full"} · Host: ${st.host||""} · ${Object.keys(st.cl||{}).length}/${Math.min(MAXH,Object.keys(M.teams).length)} players`;
+  $("lobbyMode").textContent=`${M.name} · ${st.ln==="quick"?"Quick (40 lots)":"Full"} · Host: ${st.host||""} · ${Object.keys(st.cl||{}).length}/${Math.min(MAXH,Object.keys(M.teams).length)} players${ROOM&&ROOM.relay?" · Server "+(NET.srv||SRV):""}`;
   const cl=st.cl||{};
   const myKey=host?"host":NET.myPeer;
   $("lobbyTeams").innerHTML=Object.entries(M.teams).map(([k,t])=>{const c=cl[k];const mine=c&&c[0]===myKey;return `<button class="tbtn ${mine?"on":c?"taken":""}" data-k="${k}" style="--tc:${t.c}">${crest(M,k,34)}${k}<small>${t.n}</small>${c?`<span class="who">${mine?"You":"👤 "+esc(c[1])}</span>`:`<span class="who" style="opacity:.6">🤖 CPU</span>`}</button>`}).join("");
@@ -1734,11 +1765,15 @@ $("hubStart").onclick=()=>{
 
 /* ---- live hub over MQTT (website only) ---- */
 let HUB=null,LIST=null;const HUBD={rooms:{},feed:[]};
-const HBASE="iplauctiongame/v2/hub/";
+const hbase=srv=>"iplauctiongame/v3/"+NS(srv)+"/hub/";
+let HBASE=hbase(SRV);
 async function hubConnect(){
+  if(HUB){try{HUB.end(true)}catch(e){}HUB=null}
+  HBASE=hbase(SRV);HUBD.rooms={};HUBD.feed=[];drawLive();drawFeed();drawPublic();
+  const myBase=HBASE;
   if(IN_CLAUDE||!("WebSocket" in window))return;
   try{if(!window.mqtt)await loadScript(MQTT_SRC)}catch(e){return}
-  for(const url of BROKERS){
+  for(const url of brokerOrder(SRV)){
     try{
       HUB=await new Promise((res,rej)=>{const c=window.mqtt.connect(url,{clientId:"h"+Math.random().toString(36).slice(2,10),clean:true,connectTimeout:7000,reconnectPeriod:4000});
         const to=setTimeout(()=>{c.end(true);rej()},8000);c.once("connect",()=>{clearTimeout(to);res(c)});c.once("error",()=>{clearTimeout(to);c.end(true);rej()})});
@@ -1746,7 +1781,8 @@ async function hubConnect(){
     }catch(e){HUB=null}
   }
   if(!HUB)return;
-  HUB.on("message",(topic,buf)=>{
+  if(myBase!==HBASE){try{HUB.end(true)}catch(e){}return}
+  HUB.on("message",(topic,buf)=>{if(!topic.startsWith(myBase))return;
     const s=buf.toString();
     if(topic===HBASE+"feed"){try{const a=JSON.parse(s);if(Array.isArray(a))HUBD.feed=a.slice(0,10)}catch(e){}drawFeed();return}
     if(topic.startsWith(HBASE+"public/")){const c=topic.slice((HBASE+"public/").length);if(!s)delete HUBD.rooms[c];else{try{const o=JSON.parse(s);if(o&&typeof o==="object")HUBD.rooms[c]=o}catch(e){}}drawLive();drawPublic()}
@@ -1776,10 +1812,10 @@ $("pubList").onclick=e=>{const b=e.target.closest("[data-pj]");if(!b)return;$("h
 let listIv=null;
 async function listRoom(){
   if(!NET||NET.role!=="host"||!NET.pub||!HUB_OK())return;
-  const topic=HBASE+"public/"+NET.code;
+  const topic=hbase(NET.srv||SRV)+"public/"+NET.code;
   if(!LIST){
     try{
-      LIST=await new Promise((res,rej)=>{const c=window.mqtt.connect(BROKERS[0],{clientId:"l"+Math.random().toString(36).slice(2,10),clean:true,connectTimeout:7000,reconnectPeriod:4000,will:{topic,payload:"",retain:true,qos:1}});
+      LIST=await new Promise((res,rej)=>{const c=window.mqtt.connect((NET.nr&&NET.nr.url)||brokerOrder(NET.srv||SRV)[0],{clientId:"l"+Math.random().toString(36).slice(2,10),clean:true,connectTimeout:7000,reconnectPeriod:4000,will:{topic,payload:"",retain:true,qos:1}});
         const to=setTimeout(()=>{c.end(true);rej()},8000);c.once("connect",()=>{clearTimeout(to);res(c)});c.once("error",()=>{clearTimeout(to);c.end(true);rej()})});
       LIST.topic=topic;
     }catch(e){LIST=null;return}
@@ -1807,7 +1843,31 @@ function drawHistory(){
 }
 
 drawTeamSel();
-showHub();drawFeed();drawLive();hubConnect();
+/* ---- servers ---- */
+function drawServers(){
+  const box=$("srvBox");if(!box)return;
+  box.style.display=ROOM&&ROOM.relay?"":"none";
+  $("srvGrid").innerHTML=SERVERS.map(s=>{const st=NETSTAT[s.net];const cls=!st?"":st.ok?(st.ms>2500?"slow":"ok"):"down";
+    const lab=!st?"…":st.ok?(st.ms/1000).toFixed(1)+"s":"offline";
+    return `<button data-srv="${s.n}" class="${s.n===SRV?"on":""}" title="${esc(NETS[s.net].n)}">SERVER ${s.n}<small><i class="${cls}"></i>${lab}</small></button>`}).join("");
+}
+function setServer(n){
+  if(n===SRV)return;SRV=n;try{localStorage.setItem("ipl_srv",String(n))}catch(e){}
+  drawServers();hubConnect();
+}
+$("srvGrid").onclick=e=>{const b=e.target.closest("[data-srv]");if(!b)return;setServer(+b.dataset.srv)};
+async function probeNets(){
+  if(IN_CLAUDE||!("WebSocket" in window))return;
+  try{if(!window.mqtt)await loadScript(MQTT_SRC)}catch(e){return}
+  await Promise.all(NETS.map((N,i)=>new Promise(res=>{
+    const t0=performance.now();let done=false,c;
+    const fin=ok=>{if(done)return;done=true;NETSTAT[i]={ok,ms:Math.round(performance.now()-t0)};try{c&&c.end(true)}catch(e){}drawServers();res()};
+    try{c=window.mqtt.connect(N.url,{clientId:"p"+Math.random().toString(36).slice(2,9),connectTimeout:7000,reconnectPeriod:0})}catch(e){return fin(false)}
+    c.on("connect",()=>fin(true));c.on("error",()=>fin(false));setTimeout(()=>fin(false),8000);
+  })));
+}
+
+showHub();drawFeed();drawLive();drawServers();hubConnect();probeNets();
 checkInvite();window.addEventListener("hashchange",checkInvite);
 </script>
 </body>
