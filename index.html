@@ -1582,7 +1582,7 @@ function renderRet(V){
   if(!k){
     $("retBox").innerHTML=`<div class="retwait"><div style="font-family:'Bebas Neue',Impact;font-size:34px;color:var(--tx)">RETENTIONS</div>
       <p>${V.my.length?"Your retentions are locked in. ":""}Waiting for the other teams… <b style="color:var(--gold2)">${left}s</b></p>
-      <p style="font-size:12px">Computer teams keep their real-life retentions. Anyone who doesn't confirm in time keeps their team's real-life list.</p><div class="tl">${ready}</div></div>`;
+      <p style="font-size:12px">Computer teams retain a different set of players every game. Anyone who doesn't confirm in time keeps their team's real-life list.</p><div class="tl">${ready}</div></div>`;
     return;
   }
   const cands=retCands(pool,k);
@@ -1869,7 +1869,7 @@ function startEngine(mode,seed,len,humanCtrl,fmt){
   $("speedBtn").textContent="Speed: Normal";
   if(M.pickRet){
     G.phase="retain";G.ret={due:performance.now()+RET_MS,pick:{},done:{}};
-    allTeams(M).forEach(k=>{G.ret.pick[k]=retDefault(pool,k);if(isAI(teams[k]))G.ret.done[k]=1});
+    allTeams(M).forEach(k=>{const ai=isAI(teams[k]);G.ret.pick[k]=ai?retRandom(pool,k):retDefault(pool,k);if(ai)G.ret.done[k]=1});
     bump();retCheck();return;
   }
   show("s-game");
@@ -1877,6 +1877,19 @@ function startEngine(mode,seed,len,humanCtrl,fmt){
 }
 /* ---------- mega retention phase: each human team picks up to 6 of its IPL 2024 players ---------- */
 function retCands(pool,k){return pool.filter(p=>p.rret?p.rk===k:p.prev===k).sort((a,b)=>(b.rret?1:0)-(a.rret?1:0)||b.value-a.value).map(p=>p.i)}
+// Computer teams: a different, sensible retention list every game (2–6 players, stars more likely, never an overpriced fringe player)
+function retRandom(pool,k){
+  const c=retCands(pool,k).map(i=>pool[i]).filter(p=>p.rret||(UNCAP25.has(p.name)?p.value>=1.5:p.value>=6));
+  const n=[2,3,3,4,4,4,5,5,5,6,6][Math.floor(Math.random()*11)],pick=[];let cap=0,unc=0;
+  while(pick.length<n){
+    const left=c.filter(p=>!pick.includes(p)&&(UNCAP25.has(p.name)?unc<2:cap<5));if(!left.length)break;
+    const w=left.map(p=>Math.pow(Math.max(p.value,0.5),1.3));let r=Math.random()*w.reduce((a,b)=>a+b,0),j=0;while(j<left.length-1&&(r-=w[j])>0)j++;
+    const p=left[j];pick.push(p);UNCAP25.has(p.name)?unc++:cap++;
+  }
+  pick.sort((a,b)=>b.value-a.value);let list=pick.map(p=>p.i);
+  while(list.length>1&&retCosts(pool,list).reduce((a,b)=>a+b,0)>80)list.pop();
+  return list.length?list:retDefault(pool,k);
+}
 function retDefault(pool,k){return pool.filter(p=>p.rret&&p.rk===k).map(p=>p.i)}
 function retCosts(pool,list){let c=0;return list.map(i=>{const p=pool[i],un=UNCAP25.has(p.name),sl=un?4:(RET_SLABS[c++]||18);return p.rret?p.value:sl})}
 function retValid(pool,list){if(!Array.isArray(list)||list.length>6||new Set(list).size!==list.length)return false;let u=0,c=0;for(const i of list){const p=pool[i];if(!p)return false;UNCAP25.has(p.name)?u++:c++}return u<=2&&c<=5}
@@ -2640,7 +2653,7 @@ function drawHub(){
   document.querySelectorAll("#hubFmt button").forEach(b=>{b.classList.toggle("on",b.dataset.f===APP.fmt);b.disabled=!!M.lockFmt&&b.dataset.f!=="mega"});
   $("fpM").textContent="₹"+M.purse+" Cr";$("fpC").textContent="₹"+r2(M.purse*.75)+" Cr";$("fpS").textContent="₹"+r2(M.purse*.5)+" Cr";
   if(M.retain){$("fpM").textContent="Real purses";if(M.lockFmt){$("fpC").textContent="—";$("fpS").textContent="—"}}
-  $("fmtNote").textContent=M.lockFmt?"Mini auction uses real retained squads, so only the Mega format applies.":M.pickRet?(APP.fmt==="mega"?"Mega format: before bidding, every human team picks up to 6 of its IPL 2024 players to retain. Unused slots become RTM cards. Computer teams keep their real-life retentions.":"Classic and Sprint start every team with an empty squad, no retentions or RTM."):M.key==="megaopen"?"No retentions and no RTM: every team starts empty with the full purse, and every player, including Kohli, Bumrah and Dhoni, goes under the hammer.":"";
+  $("fmtNote").textContent=M.lockFmt?"Mini auction uses real retained squads, so only the Mega format applies.":M.pickRet?(APP.fmt==="mega"?"Mega format: before bidding, every human team picks up to 6 of its IPL 2024 players to retain. Unused slots become RTM cards. Computer teams retain a different set of players every game.":"Classic and Sprint start every team with an empty squad, no retentions or RTM."):M.key==="megaopen"?"No retentions and no RTM: every team starts empty with the full purse, and every player, including Kohli, Bumrah and Dhoni, goes under the hammer.":"";
   document.querySelectorAll("#hubLen button").forEach(b=>b.classList.toggle("on",b.dataset.l===APP.len));
   $("swSolo").classList.toggle("on",APP.solo);$("swLocal").classList.toggle("on",APP.local);
   const online=!APP.solo&&!APP.local;
