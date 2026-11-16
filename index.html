@@ -382,7 +382,7 @@ body:before{background-image:linear-gradient(rgba(255,255,255,.03) 1px,transpare
     <div class="whoami"><b id="mgrShow"></b><button id="mgrChange">CHANGE</button></div>
     <div id="h-create">
       <div class="lbl2">AUCTION</div>
-      <div class="seg3" id="hubPool"><button data-m="mega" class="on"><b>MEGA 2025</b><small>182 players</small></button><button data-m="mini"><b>MINI 2026</b><small>Retention + RTM</small></button><button data-m="legends"><b>LEGENDS</b><small>10 teams · ₹150 Cr</small></button></div>
+      <div class="seg3 two" id="hubPool"><button data-m="mega" class="on"><b>MEGA 2025</b><small>Pick 6 retentions + RTM</small></button><button data-m="megaopen"><b>MEGA · NO RETENTION</b><small>All 228 players · ₹120 Cr each</small></button><button data-m="mini"><b>MINI 2026</b><small>Retention + RTM</small></button><button data-m="legends"><b>LEGENDS</b><small>10 teams · ₹150 Cr</small></button></div>
       <div class="lbl2" id="hubTeamLbl">FRANCHISE</div><div class="cap2" id="hubTeamSub">CHOOSE THE TEAM YOU'LL MANAGE.</div>
       <div class="teamsel" id="hubTeams"></div>
       <div class="lbl2">FORMAT</div>
@@ -857,14 +857,14 @@ function buildPool(mode,seed){
       pool.push({name:n,real:team,rk:LLC_BY_NAME[team],value:r2(m?rr(15,22):nt?rr(4,8):rr(0.5,2)),base:m?2:nt?1:0.3,set:m?"Marquee legend":nt?"International star":"Legend"});
     }));
   }else{
-    pool=(mode==="mega"?MEGA_RAW:MINI_RAW).trim().split("\n").map(l=>{const p=l.split("|"),v=parseFloat(p[2]);return{name:p[0],real:p[1],rk:p[1],value:v,base:iplBase(v),set:iplSet(v)}});
-    if(mode==="mega")Object.entries(MEGA_RET).forEach(([k,[,list]])=>list.split(";").forEach(x=>{const [n,v]=x.split("|");pool.push({name:n,real:k,rk:k,value:+v,base:UNCAP25.has(n)?0.3:2,set:iplSet(+v),rret:true,prev:k})}));
+    pool=((mode==="mega"||mode==="megaopen")?MEGA_RAW:MINI_RAW).trim().split("\n").map(l=>{const p=l.split("|"),v=parseFloat(p[2]);return{name:p[0],real:p[1],rk:p[1],value:v,base:iplBase(v),set:iplSet(v)}});
+    if((mode==="mega"||mode==="megaopen"))Object.entries(MEGA_RET).forEach(([k,[,list]])=>list.split(";").forEach(x=>{const [n,v]=x.split("|");pool.push({name:n,real:k,rk:k,value:+v,base:UNCAP25.has(n)?0.3:2,set:iplSet(+v),rret:true,prev:k})}));
   }
   pool.forEach(p=>p.sk=p.value*(1+rr(-0.25,0.25)));
   pool.sort((a,b)=>b.sk-a.sk||(a.name<b.name?-1:1));
   pool.forEach((p,i)=>p.i=i);
   pool.all=pool;
-  if(mode==="mega"){
+  if((mode==="mega"||mode==="megaopen")){
     pool.forEach(p=>{if(PREV24[p.name])p.prev=PREV24[p.name]});
     pool.all=pool;
   }
@@ -915,6 +915,7 @@ Object.entries(MEGA_RET).forEach(([k,[,l]])=>l.split(";").forEach(x=>{const n=x.
 const RTM_CARDS=2,RTM_MS=8000;
 const MODES={
   mega:{key:"mega",name:"Mega Auction 2025",teams:IPL_TEAMS,purse:120,pickRet:true,rtm:true,rtmN:()=>0,max:25,minFill:18,minBase:0.3,interest:0.5,cap:0.2},
+  megaopen:{key:"megaopen",name:"Mega Auction · No Retention",teams:IPL_TEAMS,purse:120,max:25,minFill:18,minBase:0.3,interest:0.5,cap:0.2},
   mini:{key:"mini",name:"Mini Auction 2026",teams:IPL_TEAMS,purse:30,retain:true,rtm:true,lockFmt:true,retData:MINI_RET,rtmN:()=>RTM_CARDS,max:25,minFill:0,minBase:0.3,interest:0.45,cap:0.4},
   legends:{key:"legends",name:"Legends Auction",teams:IPL_TEAMS,purse:150,max:25,minFill:8,minBase:0.3,interest:0.6,cap:0.16}
 };
@@ -1453,7 +1454,7 @@ function render(){
       $("pAv").innerHTML=avatar(p,M,150);$("pAv").dataset.pi=key;
       const pc=$("pCard");pc.className="pcard "+tierOf(p.set);void pc.offsetWidth;pc.style.animation="none";void pc.offsetWidth;pc.style.animation="";
       $("pNo").textContent="#"+(p.i+1);
-      $("pReal").innerHTML=`${crest(M,p.rk,16)}${M.key==="legends"?esc(teamOf(M,p.rk).n):(M.key==="mega"?"IPL 2025: ":"IPL 2026: ")+esc(p.rk)}`;
+      $("pReal").innerHTML=`${crest(M,p.rk,16)}${M.key==="legends"?esc(teamOf(M,p.rk).n):(M.key==="mini"?"IPL 2026: ":"IPL 2025: ")+esc(p.rk)}`;
     }
     $("pName").textContent=p.name;
     if($("pStats").dataset.n!==p.name){$("pStats").dataset.n=p.name;$("pRole").innerHTML=roleTag(p.name);$("pStats").innerHTML=statBoxes(p.name)}
@@ -1954,7 +1955,7 @@ function drawHub(){
   document.querySelectorAll("#hubFmt button").forEach(b=>{b.classList.toggle("on",b.dataset.f===APP.fmt);b.disabled=!!M.lockFmt&&b.dataset.f!=="mega"});
   $("fpM").textContent="₹"+M.purse+" Cr";$("fpC").textContent="₹"+r2(M.purse*.75)+" Cr";$("fpS").textContent="₹"+r2(M.purse*.5)+" Cr";
   if(M.retain){$("fpM").textContent="Real purses";if(M.lockFmt){$("fpC").textContent="—";$("fpS").textContent="—"}}
-  $("fmtNote").textContent=M.lockFmt?"Mini auction uses real retained squads, so only the Mega format applies.":M.pickRet?(APP.fmt==="mega"?"Mega format: before bidding, every human team picks up to 6 of its IPL 2024 players to retain. Unused slots become RTM cards. Computer teams keep their real-life retentions.":"Classic and Sprint start every team with an empty squad, no retentions or RTM."):"";
+  $("fmtNote").textContent=M.lockFmt?"Mini auction uses real retained squads, so only the Mega format applies.":M.pickRet?(APP.fmt==="mega"?"Mega format: before bidding, every human team picks up to 6 of its IPL 2024 players to retain. Unused slots become RTM cards. Computer teams keep their real-life retentions.":"Classic and Sprint start every team with an empty squad, no retentions or RTM."):M.key==="megaopen"?"No retentions and no RTM: every team starts empty with the full purse, and every player, including Kohli, Bumrah and Dhoni, goes under the hammer.":"";
   document.querySelectorAll("#hubLen button").forEach(b=>b.classList.toggle("on",b.dataset.l===APP.len));
   $("swSolo").classList.toggle("on",APP.solo);$("swLocal").classList.toggle("on",APP.local);
   const online=!APP.solo&&!APP.local;
