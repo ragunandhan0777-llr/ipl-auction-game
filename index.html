@@ -212,6 +212,12 @@ h1.logo span{background:linear-gradient(180deg,#ffe3a1,#f7a81b);-webkit-backgrou
 .autorow button.on{background:linear-gradient(180deg,#60a5fa,#2563eb);border-color:#60a5fa;color:#fff;box-shadow:0 6px 18px rgba(37,99,235,.35)}
 .badge-auto{font:900 9px Inter;letter-spacing:.8px;background:#2563eb;color:#fff;padding:3px 6px;border-radius:6px;margin-left:4px;vertical-align:middle}
 .msg{min-height:16px;text-align:center;font-size:12px;color:var(--red);margin-top:4px}
+.sitebar{display:none;background:linear-gradient(90deg,rgba(250,204,21,.18),rgba(250,204,21,.05));border:1px solid var(--gold);border-radius:14px;padding:12px;margin-bottom:12px;font-size:13px;line-height:1.5;color:var(--tx)}
+.sitebar.on{display:block}
+.sitebar a{display:block;margin-top:8px;text-align:center;background:var(--gold);color:#1a1400;font-weight:900;border-radius:12px;padding:11px;text-decoration:none}
+.gbar{display:flex;gap:8px;margin-bottom:10px}
+.gbar button{flex:1;background:var(--p);border:1px solid var(--line);color:var(--tx);border-radius:12px;padding:10px 6px;font:800 13px Inter;white-space:nowrap}
+.gbar .endbtn{color:#fca5a5;border-color:rgba(248,113,113,.45)}
 .subact{display:flex;gap:8px;margin-top:10px}
 .subact button{flex:1;background:var(--p);border:1px solid var(--line);color:var(--mu);border-radius:12px;padding:10px;font:700 12px Inter}
 .next{margin-top:12px;font-size:12px;color:var(--mu);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
@@ -371,6 +377,7 @@ body:before{background-image:linear-gradient(rgba(255,255,255,.03) 1px,transpare
       <div class="cap2" style="margin-top:4px">Lobbies and public rooms are separate per server. Friends must pick the same server, or use your invite link.</div>
       <div class="srvgrid" id="srvGrid"></div>
     </div>
+    <div class="sitebar" id="siteBar"></div>
     <div class="htabs" id="htabs"><button data-h="create" class="on">CREATE</button><button data-h="join">JOIN</button><button data-h="history">HISTORY</button></div>
     <div class="whoami"><b id="mgrShow"></b><button id="mgrChange">CHANGE</button></div>
     <div id="h-create">
@@ -464,6 +471,11 @@ body:before{background-image:linear-gradient(rgba(255,255,255,.03) 1px,transpare
 <!-- GAME -->
 <section class="scr" id="s-ret"><div class="retbox" id="retBox"></div></section>
 <section class="scr" id="s-game">
+  <div class="gbar" id="gbar">
+    <button id="homeBtn">🏠 Home</button>
+    <button id="pauseBtn" class="pausebtn">⏸ Pause</button>
+    <button id="endBtn" class="endbtn">⏹ End auction</button>
+  </div>
   <div class="topbar"><div class="brand">IPL <span>AUCTION</span></div><span class="live">LIVE</span></div>
   <div class="banner" id="gameBanner"></div>
   <div id="hudWrap"></div>
@@ -486,7 +498,6 @@ body:before{background-image:linear-gradient(rgba(255,255,255,.03) 1px,transpare
   </div>
   <div class="bidbar"><div class="autoinfo" id="autoInfo"></div><div class="bids" id="bids"></div><div class="autorow" id="autoRow"></div><div class="msg" id="msg"></div></div>
   <div class="subact" id="subact">
-    <button id="pauseBtn" class="pausebtn">⏸ Pause</button>
     <button id="speedBtn">Speed: Normal</button>
     <button id="simBtn">Auto-finish auction</button>
   </div>
@@ -531,7 +542,7 @@ body:before{background-image:linear-gradient(rgba(255,255,255,.03) 1px,transpare
 </section>
 </div>
 
-<div class="modal" id="modal"><div class="box"><b>Auto-finish the auction?</b><p>Computer teams will bid on all remaining players. Human players stop bidding.</p><div><button id="mNo" style="background:var(--p2);color:var(--tx)">Cancel</button><button id="mYes" style="background:var(--gold);color:#1a1400">Finish</button></div></div></div>
+<div class="modal" id="modal"><div class="box"><b id="mT">Auto-finish the auction?</b><p id="mP">Computer teams will bid on all remaining players. Human players stop bidding.</p><div><button id="mNo" style="background:var(--p2);color:var(--tx)">Cancel</button><button id="mYes" style="background:var(--gold);color:#1a1400">Finish</button></div></div></div>
 
 <script>
 const MEGA_RAW=`Arshdeep Singh|PBKS|18|1|R
@@ -1032,7 +1043,8 @@ function crest(M,k,size){
    <text x="50" y="${k.length>3?78:80}" text-anchor="middle" font-family="Bebas Neue, Impact, sans-serif" font-size="${fs}" fill="${T.t==="#fff"?"#fff":"#1a1400"}" letter-spacing="1">${esc(k)}</text>
   </svg>`;
 }
-const ART_URL=(/^https?:$/.test(location.protocol)&&!/claude\.ai|claudeusercontent|anthropic/.test(location.hostname))?location.href.split("#")[0]:"https://claude.ai/artifact/CBD4eFzELbBghzssbaWEFf";
+const SITE_URL="https://ragunandhan0777-llr.github.io/ipl-auction-game/";
+const ART_URL=(/^https?:$/.test(location.protocol)&&!/claude\.ai|claudeusercontent|anthropic/.test(location.hostname))?location.href.split("#")[0]:SITE_URL;
 function shareHTML(text){
   return `<a class="wa" href="https://wa.me/?text=${encodeURIComponent(text)}" target="_blank" rel="noopener">💬 WhatsApp</a><a class="tg" href="https://t.me/share/url?url=${encodeURIComponent(ART_URL)}&text=${encodeURIComponent(text)}" target="_blank" rel="noopener">✈️ Telegram</a><button data-copy="${esc(text)}">📋 Copy</button>`;
 }
@@ -1506,6 +1518,7 @@ function render(){
   }else $("autoInfo").classList.remove("on");
   $("msg").textContent=V.paused?(V.remote?"⏸ The host paused the auction.":"⏸ Auction paused. Tap Resume to continue."):"";
   $("subact").style.display=V.remote?"none":"";
+  $("pauseBtn").style.display=$("endBtn").style.display=V.remote?"none":"";
   $("speedBtn").style.display=NET?"none":"";
   $("pauseBtn").textContent=V.paused?"▶ Resume":"⏸ Pause";$("pauseBtn").classList.toggle("on",!!V.paused);
   const nx=V.pool.slice(V.idx+1,Math.min(V.lots,V.idx+4));
@@ -1547,9 +1560,23 @@ function passAction(){
 }
 $("pauseBtn").onclick=()=>{if(!G)return;setPause(!G.paused);$("pauseBtn").textContent=G.paused?"▶ Resume":"⏸ Pause";$("pauseBtn").classList.toggle("on",G.paused)};
 $("speedBtn").onclick=()=>{if(!G)return;G.speed=G.speed===1?0.5:G.speed===0.5?1.6:1;$("speedBtn").textContent="Speed: "+(G.speed===0.5?"Fast":G.speed===1?"Normal":"Slow")};
-$("simBtn").onclick=()=>$("modal").classList.add("on");
+let mAct=null;
+function ask(t,p,yes,fn){$("mT").textContent=t;$("mP").textContent=p;$("mYes").textContent=yes;mAct=fn;$("modal").classList.add("on")}
+$("simBtn").onclick=()=>ask("Auto-finish the auction?","Computer teams will bid on all remaining players. Human players stop bidding.","Finish",()=>{if(G)finishRest()});
 $("mNo").onclick=()=>$("modal").classList.remove("on");
-$("mYes").onclick=()=>{$("modal").classList.remove("on");if(G)finishRest()};
+$("mYes").onclick=()=>{$("modal").classList.remove("on");const f=mAct;mAct=null;if(f)f()};
+/* End auction now: nobody else is sold, everyone goes straight to picking a Playing XI from what they have */
+function endNow(){
+  if(!G||G.phase==="end"||G.phase==="xi"||G.phase==="retain")return;
+  clearTimeout(aiTimer);clearTimeout(rtmTimer);G.paused=false;G.simming=true;
+  if(G.phase==="rtm"&&G.rtm){const R=G.rtm;record(G.lot.p,R.w,R.price);G.rtm=null}
+  if(G.lot)G.lot.done=true;
+  G.lot=null;initSel();G.phase="xi";bump();
+}
+function goHome(){clearTimeout(aiTimer);clearTimeout(rtmTimer);clearTimeout(retTimer);leaveNet();G=null;show("s-home")}
+$("endBtn").onclick=()=>ask("End the auction now?","No more players will be sold. Every team goes straight to picking its Playing XI from the players it has bought so far.","End auction",endNow);
+$("homeBtn").onclick=()=>{const c=NET&&NET.role==="client",h=NET&&NET.role==="host";
+  ask("Go to the home screen?",c?"You will leave this room. The computer will bid for your team.":h?"You are the host, so this ends the auction for everyone in the room.":"This auction will be closed and its progress lost.","Go home",goHome)};
 
 function loop(){
   requestAnimationFrame(loop);
@@ -1699,7 +1726,9 @@ $("againBtn").onclick=()=>{leaveNet();G=null;show("s-home")};
 
 /* ---------- online: host ---------- */
 function genCode(){const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let s="";for(let i=0;i<6;i++)s+=A[Math.floor(Math.random()*A.length)];return s}
+const SITE_MSG="Online rooms run on the website version. Open the website (yellow button above) and create or join the room there.";
 async function hostRoom(){
+  if(IN_CLAUDE){$("hubErr").textContent=SITE_MSG;$("siteBar").scrollIntoView({block:"center"});return}
   if(!ROOM){$("hubErr").textContent="Online play isn't available in this view.";return}
   const code=genCode();
   $("hubStart").disabled=true;$("hubErr").textContent="Creating room…";
@@ -1804,6 +1833,7 @@ $("hubJoin").onclick=()=>doJoin(APP.nick,$("hubCode").value,$("hubJoinErr"),$("h
 async function doJoin(nk,codeIn,errEl,btn){
   const code=(codeIn||"").toUpperCase().replace(/[^A-Z0-9]/g,"");
   const E=errEl;
+  if(IN_CLAUDE){E.textContent=SITE_MSG;return}
   if(!nk){E.textContent="Enter your name.";return}
   if(code.length!==6){E.textContent="Room codes have 6 characters.";return}
   try{localStorage.setItem("ipl_nick",nk)}catch(e){}
@@ -1888,7 +1918,8 @@ function leaveNet(){
 }
 
 $("homeCrests").innerHTML=Object.keys(IPL_TEAMS).map(k=>crest(MODES.mega,k,30)).join("");
-$("homeHint").textContent=IN_CLAUDE?"To play online here, friends need this game shared with them and must be signed in to Claude.":"Friends can open the link on any phone. No login needed.";
+if(IN_CLAUDE){$("siteBar").classList.add("on");$("siteBar").innerHTML=`<b>Playing with friends?</b> Online rooms work on the website version. Everyone opens it in their normal browser, no login needed. Solo and Pass & play work right here.<a href="${SITE_URL}" target="_blank" rel="noopener">🌐 OPEN THE WEBSITE TO PLAY ONLINE</a>`}
+$("homeHint").textContent=IN_CLAUDE?"To play online with friends, share the website link. They can open it on any phone, no login needed.":"Friends can open the link on any phone. No login needed.";
 $("homeShare").innerHTML=shareHTML(`🏏 Let's play the IPL Auction Game! Bid for players, build your Playing XI and beat me on the leaderboard:\n${ART_URL}`);
 /* ================= HUB ================= */
 APP.fmt="mega";APP.solo=true;APP.local=false;APP.pub=false;
