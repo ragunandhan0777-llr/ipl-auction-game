@@ -215,6 +215,28 @@ h1.logo span{background:linear-gradient(180deg,#ffe3a1,#f7a81b);-webkit-backgrou
 .sitebar{display:none;background:linear-gradient(90deg,rgba(250,204,21,.18),rgba(250,204,21,.05));border:1px solid var(--gold);border-radius:14px;padding:12px;margin-bottom:12px;font-size:13px;line-height:1.5;color:var(--tx)}
 .sitebar.on{display:block}
 .sitebar a{display:block;margin-top:8px;text-align:center;background:var(--gold);color:#1a1400;font-weight:900;border-radius:12px;padding:11px;text-decoration:none}
+.chatfab{display:none;position:fixed;right:12px;bottom:92px;z-index:60;width:52px;height:52px;border-radius:50%;border:1px solid var(--gold);background:#161b2c;font-size:22px;box-shadow:0 6px 20px rgba(0,0,0,.5)}
+.chatfab.on{display:block}
+.chatfab i{display:none;position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;border-radius:10px;background:#ef4444;color:#fff;font:800 11px/20px Inter;font-style:normal;text-align:center;padding:0 5px}
+.chatfab i.on{display:block}
+.chatpeek{display:none;position:fixed;right:72px;bottom:98px;z-index:60;max-width:230px;background:#161b2c;border:1px solid var(--line);border-radius:14px 14px 4px 14px;padding:8px 11px;font-size:12.5px;color:var(--tx);box-shadow:0 6px 20px rgba(0,0,0,.5);overflow-wrap:anywhere}
+.chatpeek.on{display:block}
+.chatpeek b{color:var(--gold2)}
+.chatpanel{display:none;position:fixed;left:0;right:0;bottom:0;z-index:70;height:min(62vh,480px);max-width:560px;margin:0 auto;background:#10141f;border:1px solid var(--line);border-bottom:0;border-radius:20px 20px 0 0;flex-direction:column;box-shadow:0 -10px 40px rgba(0,0,0,.6)}
+.chatpanel.on{display:flex}
+.chathead{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}
+.chathead b{font:900 13px Inter;letter-spacing:1.5px}
+.chathead button{background:none;border:0;color:var(--mu);font-size:18px;padding:4px 8px}
+.chatlist{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.chatlist .cm{max-width:82%;background:var(--p2);border:1px solid var(--line);border-radius:14px 14px 14px 4px;padding:6px 10px;font-size:13.5px;overflow-wrap:anywhere;align-self:flex-start}
+.chatlist .cm.me{align-self:flex-end;border-radius:14px 14px 4px 14px;background:rgba(250,204,21,.14);border-color:rgba(250,204,21,.4)}
+.chatlist .cm small{display:block;font-size:10.5px;font-weight:800;color:var(--gold2);margin-bottom:1px}
+.chatlist .none{color:var(--mu);font-size:12.5px;text-align:center;margin:auto}
+.chatquick{display:flex;gap:6px;overflow-x:auto;padding:6px 12px}
+.chatquick button{flex:0 0 auto;background:var(--p2);border:1px solid var(--line);color:var(--tx);border-radius:999px;padding:6px 11px;font:700 12.5px Inter}
+.chatform{display:flex;gap:8px;padding:8px 12px 14px}
+.chatform input{flex:1;min-width:0;background:var(--p2);border:1px solid var(--line);color:var(--tx);border-radius:12px;padding:11px 12px;font:500 15px Inter}
+.chatform button{background:var(--gold);color:#1a1400;border:0;border-radius:12px;padding:0 16px;font:900 13px Inter}
 .gbar{display:flex;gap:8px;margin-bottom:10px}
 .gbar button{flex:1;background:var(--p);border:1px solid var(--line);color:var(--tx);border-radius:12px;padding:10px 6px;font:800 13px Inter;white-space:nowrap}
 .gbar .endbtn{color:#fca5a5;border-color:rgba(248,113,113,.45)}
@@ -468,6 +490,15 @@ body:before{background-image:linear-gradient(rgba(255,255,255,.03) 1px,transpare
   <button class="ghost" id="lobbyLeave">Leave room</button>
 </section>
 
+<!-- ROOM CHAT -->
+<button class="chatfab" id="chatFab" aria-label="Room chat">💬<i id="chatBadge"></i></button>
+<div class="chatpeek" id="chatPeek"></div>
+<div class="chatpanel" id="chatPanel">
+  <div class="chathead"><b>ROOM CHAT</b><button id="chatClose" aria-label="Close chat">✕</button></div>
+  <div class="chatlist" id="chatList"></div>
+  <div class="chatquick" id="chatQuick"><button>🔥</button><button>😂</button><button>👏</button><button>😱</button><button>Good buy!</button><button>Too costly!</button></div>
+  <form class="chatform" id="chatForm"><input id="chatIn" maxlength="140" placeholder="Type a message…" autocomplete="off"><button type="submit">Send</button></form>
+</div>
 <!-- GAME -->
 <section class="scr" id="s-ret"><div class="retbox" id="retBox"></div></section>
 <section class="scr" id="s-game">
@@ -988,6 +1019,43 @@ $("retBox").addEventListener("click",e=>{
   if(j>=0)sel.splice(j,1);else{const nx=sel.concat([i]);if(!retValid(V.pool,nx)){const u=nx.filter(x=>UNCAP25.has(V.pool[x].name)).length;$("retMsg").textContent=nx.length>6?"You can keep at most 6 players.":u>2?"Max 2 uncapped players.":"Max 5 capped players.";return}sel.push(i)}
   renderRet(V);
 });
+
+/* ---------- room chat (online rooms): each player keeps their last few messages in their own presence ---------- */
+const CHAT={list:[],seen:new Set(),mine:[],unread:0,open:false,room:null,peekT:null};
+function chatReset(){CHAT.list=[];CHAT.seen=new Set();CHAT.mine=[];CHAT.unread=0;CHAT.open=false;$("chatPanel").classList.remove("on");$("chatPeek").classList.remove("on");chatDraw()}
+function chatScan(peers){
+  if(!NET)return;if(CHAT.room!==NET.nr){chatReset();CHAT.room=NET.nr}
+  let fresh=null;
+  (peers||[]).forEach(p=>{const pr=p.presence;if(!pr||!Array.isArray(pr.ch))return;
+    const nm=cleanNick(String(pr.cn||"")).slice(0,16)||"Player";
+    pr.ch.slice(-6).forEach(m=>{if(!Array.isArray(m))return;const t=+m[0],x=String(m[1]||"").slice(0,140).trim();if(!t||!x)return;const id=p.peer+":"+t;if(CHAT.seen.has(id))return;
+      CHAT.seen.add(id);const e={t,nm,x,me:!!(p.isMe||p.sameTab)};CHAT.list.push(e);if(!e.me&&Date.now()-t<60000)fresh=e})});
+  CHAT.list.sort((a,b)=>a.t-b.t);if(CHAT.list.length>80)CHAT.list=CHAT.list.slice(-80);
+  if(fresh&&!CHAT.open){CHAT.unread++;$("chatPeek").innerHTML=`<b>${esc(fresh.nm)}:</b> ${esc(fresh.x)}`;$("chatPeek").classList.add("on");clearTimeout(CHAT.peekT);CHAT.peekT=setTimeout(()=>$("chatPeek").classList.remove("on"),4000)}
+  chatDraw();
+}
+function chatDraw(){
+  const on=!!(NET&&NET.nr);$("chatFab").classList.toggle("on",on&&!CHAT.open);
+  if(!on){$("chatPanel").classList.remove("on");$("chatPeek").classList.remove("on");CHAT.open=false}
+  $("chatBadge").textContent=CHAT.unread>9?"9+":CHAT.unread;$("chatBadge").classList.toggle("on",CHAT.unread>0);
+  if(!CHAT.open)return;
+  const L=$("chatList"),stick=L.scrollHeight-L.scrollTop-L.clientHeight<60;
+  L.innerHTML=CHAT.list.length?CHAT.list.map(m=>`<div class="cm ${m.me?"me":""}">${m.me?"":`<small>${esc(m.nm)}</small>`}${esc(m.x)}</div>`).join(""):`<div class="none">No messages yet. Say hi to the room!</div>`;
+  if(stick)L.scrollTop=L.scrollHeight;
+}
+function chatSend(x){
+  x=String(x||"").replace(/\s+/g," ").trim().slice(0,140);if(!x||!NET||!NET.nr)return;
+  const now=Date.now();if(now-(CHAT.lastSent||0)<700)return;CHAT.lastSent=now;
+  CHAT.mine.push([now,x]);CHAT.mine=CHAT.mine.slice(-6);
+  NET.nr.presence({cn:APP.nick||"Player",ch:CHAT.mine}).catch(()=>{});
+  if(NET.peers)chatScan(NET.peers);
+  const L=$("chatList");L.scrollTop=L.scrollHeight;
+}
+$("chatFab").onclick=()=>{CHAT.open=true;CHAT.unread=0;$("chatPanel").classList.add("on");$("chatPeek").classList.remove("on");chatDraw();const L=$("chatList");L.scrollTop=L.scrollHeight};
+$("chatClose").onclick=()=>{CHAT.open=false;$("chatPanel").classList.remove("on");chatDraw()};
+$("chatForm").onsubmit=e=>{e.preventDefault();chatSend($("chatIn").value);$("chatIn").value=""};
+$("chatQuick").onclick=e=>{const b=e.target.closest("button");if(b)chatSend(b.textContent)};
+setInterval(chatDraw,1000);
 
 /* ---------- player avatar (drawn, not a photo) ---------- */
 function initials(n){const w=n.replace(/[^A-Za-z ]/g,"").split(" ").filter(Boolean);if(!w.length)return"?";return(w[0][0]+(w.length>1?w[w.length-1][0]:(w[0][1]||""))).toUpperCase()}
@@ -1746,7 +1814,7 @@ function lobbyState(){return{v:Date.now(),ph:"lobby",m:NET.mode,fm:NET.fmt,sd:NE
 function pushLobby(){if(NET&&NET.role==="host"){NET.nr.presence({r:"host",st:lobbyState()}).catch(()=>{});listRoom()}renderLobby()}
 function onHostPeers(ch){
   if(!NET||NET.role!=="host")return;
-  NET.peers=ch.peers;
+  NET.peers=ch.peers;chatScan(ch.peers);
   const live=new Set(ch.peers.map(p=>p.peer));
   if(!G){
     // lobby: drop claims of peers who left, apply requested claims
@@ -1860,7 +1928,7 @@ async function doJoin(nk,codeIn,errEl,btn){
 }
 function onClientPeers(ch){
   if(!NET||NET.role!=="client")return;
-  NET.peers=ch.peers;
+  NET.peers=ch.peers;chatScan(ch.peers);
   const me=ch.peers.find(p=>p.sameTab);if(me)NET.myPeer=me.peer;
   const host=ch.peers.find(p=>!p.sameTab&&p.presence&&p.presence.r==="host"&&p.presence.st);
   if(!host){if(NET.sawHost){banner("gameBanner","The host left — the game has ended.");banner("lobbyBanner","The host left the room.")}renderLobby();return}
