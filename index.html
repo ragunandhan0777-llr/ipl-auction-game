@@ -245,7 +245,15 @@ h1.logo span{background:linear-gradient(180deg,#ffe3a1,#f7a81b);-webkit-backgrou
 .next{margin-top:12px;font-size:12px;color:var(--mu);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .next b{color:var(--tx);font-weight:600}
 .tabs{display:flex;gap:4px;margin-top:16px;background:var(--p);border:1px solid var(--line);border-radius:14px;padding:4px}
-.tabs button{flex:1;background:none;border:0;color:var(--mu);border-radius:10px;padding:10px 6px;font:800 13px Inter}
+.tabs button{flex:1;background:none;border:0;color:var(--mu);border-radius:10px;padding:10px 4px;font:800 12.5px Inter}
+.setfind{width:100%;background:var(--p2);border:1px solid var(--line);color:var(--tx);border-radius:12px;padding:11px 12px;font:500 15px Inter;margin-bottom:8px}
+.sethead{display:flex;align-items:center;gap:8px;width:100%;background:var(--p2);border:1px solid var(--line);color:var(--tx);border-radius:12px;padding:10px 12px;margin-bottom:6px;font:inherit;text-align:left}
+.sethead.cur{border-color:var(--gold)}
+.sethead b{font:900 12px Inter;letter-spacing:.5px;flex:1}
+.sethead small{color:var(--mu);font-size:11px}
+.sethead.done{opacity:.55}
+.setrow.now{background:rgba(250,204,21,.12);border-radius:10px}
+.setrow.past{opacity:.5}
 .tabs button.on{background:linear-gradient(180deg,rgba(247,185,62,.25),rgba(247,185,62,.1));color:var(--tx);box-shadow:inset 0 0 0 1px rgba(247,185,62,.5)}
 .panel{background:var(--p);border:1px solid var(--line);border-radius:18px;margin-top:8px;max-height:380px;overflow:auto;backdrop-filter:blur(14px)}
 .row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--line);font-size:13px}
@@ -411,7 +419,7 @@ body:before{background-image:linear-gradient(rgba(255,255,255,.03) 1px,transpare
       <div class="fmt" id="hubFmt"><button data-f="mega" class="on"><b>🏆 MEGA</b><small>25 players</small><small id="fpM"></small></button><button data-f="classic"><b>☆ CLASSIC</b><small>11 players</small><small id="fpC"></small></button><button data-f="sprint"><b>⚡ SPRINT</b><small>5 players</small><small id="fpS"></small></button></div>
       <div class="cap2" id="fmtNote" style="margin-top:6px"></div>
       <div class="lbl2">LENGTH</div>
-      <div class="seg3 two" id="hubLen"><button data-l="quick" class="on"><b>QUICK</b><small>Top 40 players</small></button><button data-l="full"><b>FULL</b><small>Every player</small></button></div>
+      <div class="seg3" id="hubLen"><button data-l="quick" class="on"><b>QUICK</b><small>First 40 players</small></button><button data-l="mid"><b>MEDIUM</b><small>First 150 players</small></button><button data-l="full"><b>FULL</b><small>Every player</small></button></div>
       <div class="tog"><div><b>SOLO VS AI BOTS</b><span>Play instantly against computer franchises. No room code.</span></div><button class="sw on" id="swSolo" aria-label="Solo vs AI bots"></button></div>
       <div class="tog"><div><b>PASS &amp; PLAY</b><span>2–9 friends share this phone, each with their own bid button.</span></div><button class="sw" id="swLocal" aria-label="Pass and play"></button></div>
       <div class="tog" id="pubRow"><div><b>PUBLIC LOBBY</b><span id="pubSub">Listed under Join so anyone can discover and join your room.</span></div><button class="sw" id="swPub" aria-label="Public lobby"></button></div>
@@ -537,6 +545,7 @@ body:before{background-image:linear-gradient(rgba(255,255,255,.03) 1px,transpare
     <button class="on" data-t="log">Live log</button>
     <button data-t="squad">My squad</button>
     <button data-t="teams">All teams</button>
+    <button data-t="sets">Sets</button>
   </div>
   <div class="panel" id="panel"></div>
 </section>
@@ -875,6 +884,586 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"
 const $=id=>document.getElementById(id);
 const cleanNick=s=>String(s||"").replace(/[^\p{L}\p{N} ._-]/gu,"").trim().slice(0,14);
 
+// Official IPL 2025 auction register (574 shortlisted players + one late addition): set no | name | country | role | Capped/Uncapped/Associate | base ₹Cr | 2024 team
+const MEGA_REG=`1|Jos Buttler|ENG|W|C|2|RR
+1|Shreyas Iyer|IND|B|C|2|KKR
+1|Rishabh Pant|IND|B|C|2|DC
+1|Kagiso Rabada|SA|L|C|2|PBKS
+1|Arshdeep Singh|IND|L|C|2|PBKS
+1|Mitchell Starc|AUS|L|C|2|KKR
+2|Yuzvendra Chahal|IND|L|C|2|RR
+2|Liam Livingstone|ENG|A|C|2|PBKS
+2|David Miller|SA|B|C|1.5|GT
+2|KL Rahul|IND|W|C|2|LSG
+2|Mohammed Shami|IND|L|C|2|GT
+2|Mohammed Siraj|IND|L|C|2|RCB
+3|Harry Brook|ENG|B|C|2|DC
+3|Devon Conway|NZ|B|C|2|CSK
+3|Jake Fraser-McGurk|AUS|B|C|2|DC
+3|Aiden Markram|SA|B|C|2|SRH
+3|Devdutt Padikkal|IND|B|C|2|LSG
+3|Rahul Tripathi|IND|B|C|0.75|SRH
+3|David Warner|AUS|B|C|2|DC
+4|Ravichandran Ashwin|IND|A|C|2|RR
+4|Venkatesh Iyer|IND|A|C|2|KKR
+4|Mitchell Marsh|AUS|A|C|2|DC
+4|Glenn Maxwell|AUS|A|C|2|RCB
+4|Harshal Patel|IND|A|C|2|PBKS
+4|Rachin Ravindra|NZ|A|C|1.5|CSK
+4|Marcus Stoinis|AUS|A|C|2|LSG
+5|Jonny Bairstow|ENG|W|C|2|PBKS
+5|Quinton de Kock|SA|W|C|2|LSG
+5|Rahmanullah Gurbaz|AFG|W|C|2|KKR
+5|Ishan Kishan|IND|W|C|2|MI
+5|Phil Salt|ENG|W|C|2|KKR
+5|Jitesh Sharma|IND|W|C|1|PBKS
+6|Khaleel Ahmed|IND|L|C|2|DC
+6|Trent Boult|NZ|L|C|2|RR
+6|Josh Hazlewood|AUS|L|C|2|
+6|Avesh Khan|IND|L|C|2|RR
+6|Prasidh Krishna|IND|L|C|2|RR
+6|T Natarajan|IND|L|C|2|SRH
+6|Anrich Nortje|SA|L|C|2|DC
+7|Noor Ahmad|AFG|L|C|2|GT
+7|Rahul Chahar|IND|L|C|1|PBKS
+7|Wanindu Hasaranga|SL|L|C|2|SRH
+7|Waqar Salamkheil|AFG|L|C|0.75|
+7|Maheesh Theekshana|SL|L|C|2|CSK
+7|Adam Zampa|AUS|L|C|2|RR
+8|Yash Dhull|IND|B|U|0.3|DC
+8|Abhinav Manohar|IND|B|U|0.3|GT
+8|Karun Nair|IND|B|U|0.3|
+8|Angkrish Raghuvanshi|IND|B|U|0.3|KKR
+8|Anmolpreet Singh|IND|B|U|0.3|SRH
+8|Atharva Taide|IND|B|U|0.3|PBKS
+8|Nehal Wadhera|IND|B|U|0.3|MI
+9|Harpreet Brar|IND|A|U|0.3|PBKS
+9|Naman Dhir|IND|A|U|0.3|MI
+9|Mahipal Lomror|IND|A|U|0.5|RCB
+9|Sameer Rizvi|IND|A|U|0.3|CSK
+9|Abdul Samad|IND|A|U|0.3|SRH
+9|Vijay Shankar|IND|A|U|0.3|GT
+9|Ashutosh Sharma|IND|A|U|0.3|PBKS
+9|Nishant Sindhu|IND|A|U|0.3|CSK
+9|Utkarsh Singh|IND|A|U|0.3|
+10|Aryan Juyal|IND|W|U|0.3|
+10|Kumar Kushagra|IND|W|U|0.3|GT
+10|Robin Minz|IND|W|U|0.3|GT
+10|Anuj Rawat|IND|W|U|0.3|RCB
+10|Lavnith Sisodia|IND|W|U|0.3|
+10|Vishnu Vinod|IND|W|U|0.3|MI
+10|Upendra Singh Yadav|IND|W|U|0.3|SRH
+11|Vaibhav Arora|IND|L|U|0.3|KKR
+11|Rasikh Dar|IND|L|U|0.3|DC
+11|Akash Madhwal|IND|L|U|0.3|MI
+11|Mohit Sharma|IND|L|U|0.5|GT
+11|Simarjeet Singh|IND|L|U|0.3|CSK
+11|Yash Thakur|IND|L|U|0.3|LSG
+11|Kartik Tyagi|IND|L|U|0.4|GT
+11|Vyshak Vijaykumar|IND|L|U|0.3|RCB
+12|Piyush Chawla|IND|L|U|0.5|MI
+12|Shreyas Gopal|IND|L|U|0.3|MI
+12|Mayank Markande|IND|L|U|0.3|SRH
+12|Suyash Sharma|IND|L|U|0.3|KKR
+12|Karn Sharma|IND|L|U|0.5|RCB
+12|Kumar Kartikeya Singh|IND|L|U|0.3|MI
+12|Manav Suthar|IND|L|U|0.3|GT
+13|Mayank Agarawal|IND|B|C|1|SRH
+13|Faf du Plessis|SA|B|C|2|RCB
+13|Glenn Phillips|NZ|B|C|2|SRH
+13|Rovman Powell|WI|B|C|1.5|RR
+13|Ajinkya Rahane|IND|B|C|1.5|CSK
+13|Prithvi Shaw|IND|B|C|0.75|DC
+13|Kane Williamson|NZ|B|C|2|GT
+14|Sam Curran|ENG|A|C|2|PBKS
+14|Marco Jansen|SA|A|C|1.25|SRH
+14|Daryl Mitchell|NZ|A|C|2|CSK
+14|Krunal Pandya|IND|A|C|2|LSG
+14|Nitish Rana|IND|A|C|1.5|KKR
+14|Washington Sundar|IND|A|C|2|SRH
+14|Shardul Thakur|IND|A|C|2|CSK
+15|K S Bharat|IND|W|C|0.75|KKR
+15|Alex Carey|AUS|W|C|1|
+15|Donovan Ferreira|SA|W|C|0.75|RR
+15|Shai Hope|WI|W|C|1.25|DC
+15|Josh Inglis|AUS|W|C|2|
+15|Ryan Rickelton|SA|W|C|1|
+16|Deepak Chahar|IND|L|C|2|CSK
+16|Gerald Coetzee|SA|L|C|1.25|
+16|Akash Deep|IND|L|C|1|RCB
+16|Tushar Deshpande|IND|L|C|1|CSK
+16|Lockie Ferguson|NZ|L|C|2|RCB
+16|Bhuvneshwar Kumar|IND|L|C|2|SRH
+16|Mukesh Kumar|IND|L|C|2|DC
+17|AM Ghazanfar|AFG|L|C|0.75|KKR
+17|Akeal Hosein|WI|L|C|1.5|
+17|Keshav Maharaj|SA|L|C|0.75|RR
+17|Mujeeb Ur Rahman|AFG|L|C|2|
+17|Adil Rashid|ENG|L|C|2|
+17|Vijayakanth Viyaskanth|SL|L|C|0.75|SRH
+18|Ricky Bhui|IND|B|U|0.3|DC
+18|Swastik Chikara|IND|B|U|0.3|DC
+18|Aarya Desai|IND|B|U|0.3|
+18|Shubham Dubey|IND|B|U|0.3|RR
+18|Madhav Kaushik|IND|B|U|0.3|
+18|Pukhraj Mann|IND|B|U|0.3|
+18|Shaik Rasheed|IND|B|U|0.3|CSK
+18|Himmat Singh|IND|B|U|0.3|
+19|Mayank Dagar|IND|A|U|0.3|RCB
+19|Anshul Kamboj|IND|A|U|0.3|MI
+19|Arshad Khan|IND|A|U|0.3|LSG
+19|Darshan Nalkande|IND|A|U|0.3|GT
+19|Suyash Prabhudessai|IND|A|U|0.3|RCB
+19|Anukul Roy|IND|A|U|0.3|KKR
+19|Swapnil Singh|IND|A|U|0.3|PBKS
+19|Sanvir Singh|IND|A|U|0.3|SRH
+20|Avanish Aravelly|IND|W|U|0.3|CSK
+20|Vansh Bedi|IND|W|U|0.3|
+20|Saurav Chauhan|IND|W|U|0.3|RCB
+20|Harvik Desai|IND|W|U|0.3|MI
+20|Tom Kohler-Cadmore|ENG|W|U|0.5|RR
+20|Kunal Rathore|IND|W|U|0.3|RR
+20|B R Sharath|IND|W|U|0.3|GT
+21|Gurnoor Brar|IND|L|U|0.3|GT
+21|Mukesh Choudhary|IND|L|U|0.3|CSK
+21|Sakib Hussain|IND|L|U|0.3|KKR
+21|Vidwath Kaverappa|IND|L|U|0.3|PBKS
+21|Rajan Kumar|IND|L|U|0.3|RCB
+21|Sushant Mishra|IND|L|U|0.3|GT
+21|Arjun Tendulkar|IND|L|U|0.3|MI
+22|Zeeshan Ansari|IND|L|U|0.3|
+22|Prince Choudhary|IND|L|U|0.3|PBKS
+22|Himanshu Sharma|IND|L|U|0.3|RCB
+22|M Siddharth|IND|L|U|0.3|LSG
+22|Digvesh Singh|IND|L|U|0.3|
+22|Prashant Solanki|IND|L|U|0.3|CSK
+22|Jhathavedh Subramanyan|IND|L|U|0.3|SRH
+23|Finn Allen|NZ|B|C|2|
+23|Dewald Brevis|SA|B|C|0.75|MI
+23|Ben Duckett|ENG|B|C|2|
+23|Manish Pandey|IND|B|C|0.75|KKR
+23|Rilee Rossouw|SA|B|C|2|PBKS
+23|Sherfane Rutherford|WI|B|C|1.5|KKR
+23|Ashton Turner|AUS|B|C|1|LSG
+23|James Vince|ENG|B|C|2|
+24|Shahbaz Ahamad|IND|A|C|1|SRH
+24|Moeen Ali|ENG|A|C|2|CSK
+24|Tim David|AUS|A|C|2|MI
+24|Deepak Hooda|IND|A|C|0.75|LSG
+24|Will Jacks|ENG|A|C|2|RCB
+24|Azmatullah Omarzai|AFG|A|C|1.5|GT
+24|R Sai Kishore|IND|A|C|0.75|GT
+24|Romario Shepherd|WI|A|C|1.5|MI
+25|Tom Banton|ENG|W|C|2|
+25|Sam Billings|ENG|W|C|1.5|
+25|Jordan Cox|ENG|W|C|1.25|
+25|Ben McDermott|AUS|W|C|0.75|
+25|Kusal Mendis|SL|W|C|0.75|
+25|Kusal Perera|SL|W|C|0.75|
+25|Josh Philippe|AUS|W|C|0.75|
+25|Tim Seifert|NZ|W|C|1.25|
+26|Nandre Burger|SA|L|C|1.25|RR
+26|Spencer Johnson|AUS|L|C|2|GT
+26|Umran Malik|IND|L|C|0.75|SRH
+26|Mustafizur Rahman|BAN|L|C|2|CSK
+26|Ishant Sharma|IND|L|C|0.75|DC
+26|Nuwan Thushara|SL|L|C|0.75|MI
+26|Naveen Ul Haq|AFG|L|C|2|LSG
+26|Jaydev Unadkat|IND|L|C|1|SRH
+26|Umesh Yadav|IND|L|C|2|GT
+27|Rishad Hossain|BAN|L|C|0.75|
+27|Zahir Khan Pakten|AFG|L|C|0.75|
+27|Nqabayomzi Peter|SA|L|C|0.75|
+27|Tanveer Sangha|AUS|L|C|0.75|
+27|Tabraiz Shamsi|SA|L|C|2|
+27|Jeffery Vandersay|SL|L|C|0.75|
+28|Sachin Baby|IND|B|U|0.3|
+28|Priyam Garg|IND|B|U|0.3|
+28|Harnoor Pannu|IND|B|U|0.3|
+28|Smaran Ravichandran|IND|B|U|0.3|
+28|Shashwat Rawat|IND|B|U|0.3|
+28|Andre Siddarth|IND|B|U|0.3|
+28|Avneesh Sudha|IND|B|U|0.3|
+28|Apoorv Wankhade|IND|B|U|0.3|
+29|Yudhvir Singh|IND|A|U|0.3|LSG
+29|Rishi Dhawan|IND|A|U|0.3|PBKS
+29|Rajvardhan Hangargekar|IND|A|U|0.3|CSK
+29|Tanush Kotian|IND|A|U|0.3|RR
+29|Arshin Kulkarni|IND|A|U|0.3|LSG
+29|Shams Mulani|IND|A|U|0.3|MI
+29|Shivam Singh|IND|A|U|0.3|PBKS
+29|Lalit Yadav|IND|A|U|0.3|DC
+30|Mohammed Azharuddeen|IND|W|U|0.3|
+30|L R Chethan|IND|W|U|0.3|
+30|Aryaman Singh Dhaliwal|IND|W|U|0.3|
+30|Urvil Patel|IND|W|U|0.3|
+30|Sanskar Rawat|IND|W|U|0.3|
+30|Bipin Saurabh|IND|W|U|0.3|
+30|Tanay Thyagarajann|IND|W|U|0.3|
+31|Money Grewal|IND|L|U|0.3|
+31|Ashwani Kumar|IND|L|U|0.3|
+31|Ishan Porel|IND|L|U|0.3|
+31|Abhilash Shetty|IND|L|U|0.3|
+31|Akash Singh|IND|L|U|0.3|
+31|Gurjapneet Singh|IND|L|U|0.3|
+31|Basil Thampi|IND|L|U|0.3|
+32|Murugan Ashwin|IND|L|U|0.3|
+32|Shreyas Chavan|IND|L|U|0.3|
+32|Chintal Gandhi|IND|L|U|0.3|
+32|Raghav Goyal|IND|L|U|0.3|
+32|Jagadeesha Suchith|IND|L|U|0.3|
+32|Roshan Waghsare|IND|L|U|0.3|
+32|Bailapudi Yeswanth|IND|L|U|0.3|
+33|Sediqullah Atal|AFG|B|C|0.75|
+33|Matthew Breetzke|SA|B|C|0.75|
+33|Mark Chapman|NZ|B|C|1.5|
+33|Brandon King|WI|B|C|0.75|
+33|Evin Lewis|WI|B|C|2|
+33|Pathum Nissanka|SL|B|C|0.75|
+33|Bhanuka Rajapaksa|SL|B|C|0.75|
+33|Steve Smith|AUS|B|C|2|
+34|Gus Atkinson|ENG|A|C|2|KKR
+34|Tom Curran|ENG|A|C|2|RCB
+34|Krishnappa Gowtham|IND|A|C|1|LSG
+34|Mohammad Nabi|AFG|A|C|1.5|MI
+34|Gulbadin Naib|AFG|A|C|1|DC
+34|Sikandar Raza|ZIM|A|C|1.25|PBKS
+34|Mitchell Santner|NZ|A|C|2|CSK
+34|Jayant Yadav|IND|A|C|0.75|GT
+35|Johnson Charles|WI|W|C|0.75|
+35|Litton Das|BAN|W|C|0.75|
+35|Andre Fletcher|WI|W|C|0.75|
+35|Tom Latham|NZ|W|C|1.5|
+35|Ollie Pope|ENG|W|C|0.75|
+35|Kyle Verreynne|SA|W|C|0.75|
+36|Fazalhaq Farooqi|AFG|L|C|2|SRH
+36|Richard Gleeson|ENG|L|C|0.75|CSK
+36|Matt Henry|NZ|L|C|2|LSG
+36|Alzarri Joseph|WI|L|C|2|RCB
+36|Kwena Maphaka|SA|L|C|0.75|MI
+36|Kuldeep Sen|IND|L|C|0.75|RR
+36|Reece Topley|ENG|L|C|0.75|RCB
+36|Lizaad Williams|SA|L|C|0.75|DC
+36|Luke Wood|ENG|L|C|0.75|MI
+37|Sachin Dhas|IND|B|U|0.3|
+37|Leus Du Plooy|ENG|B|U|0.5|
+37|Ashwin Hebbar|IND|B|U|0.3|
+37|Rohan Kunnummal|IND|B|U|0.3|
+37|Ayush Pandey|IND|B|U|0.3|
+37|Akshat Raghuwanshi|IND|B|U|0.3|
+37|Shoun Roger|IND|B|U|0.4|
+37|Virat Singh|IND|B|U|0.3|
+38|Priyansh Arya|IND|A|U|0.3|
+38|Manoj Bhandage|IND|A|U|0.3|RCB
+38|Pravin Dubey|IND|A|U|0.3|DC
+38|Ajay Mandal|IND|A|U|0.3|CSK
+38|Prerak Mankad|IND|A|U|0.3|LSG
+38|Vipraj Nigam|IND|A|U|0.3|
+38|Vicky Ostwal|IND|A|U|0.3|DC
+38|Shivalik Sharma|IND|A|U|0.3|MI
+39|Salil Arora|IND|W|U|0.3|
+39|Dinesh Bana|IND|W|U|0.3|
+39|Ajitesh Guruswamy|IND|W|U|0.3|
+39|Narayan Jagadeesan|IND|W|U|0.3|
+39|KL Shrijith|IND|W|U|0.3|
+39|Michael Pepper|ENG|W|U|0.5|
+39|Vishnu Solanki|IND|W|U|0.3|
+40|K M Asif|IND|L|U|0.3|
+40|Akhil Chaudhary|IND|L|U|0.3|
+40|Himanshu Chauhan|IND|L|U|0.3|
+40|Arpit Guleria|IND|L|U|0.3|
+40|Nishanth Saranu|IND|L|U|0.3|
+40|Kuldip Yadav|IND|L|U|0.3|
+40|Prithviraj Yarra|IND|L|U|0.3|
+41|Shubham Agrawal|IND|L|U|0.3|
+41|Jass Inder Baidwan|IND|L|U|0.3|
+41|Jasmer Dhankhar|IND|L|U|0.3|
+41|Pulkit Narang|IND|L|U|0.3|
+41|Saumy Pandey|IND|L|U|0.3|
+41|Mohit Rathee|IND|L|U|0.3|
+41|Himanshu Singh|IND|L|U|0.3|
+42|Towhid Hridoy|BAN|B|C|0.75|
+42|Mikyle Louis|WI|B|C|0.75|
+42|Harry Tector|IRE|B|C|0.75|
+42|Rassie Van Der Dussen|SA|B|C|2|
+42|Will Young|NZ|B|C|1.25|
+42|Najibullah Zadran|AFG|B|C|0.75|
+42|Ibrahim Zadran|AFG|B|C|0.75|
+43|Sean Abbott|AUS|A|C|2|
+43|Jacob Bethell|ENG|A|C|1.25|
+43|Brydon Carse|ENG|A|C|1|
+43|Aaron Hardie|AUS|A|C|1.25|
+43|Sarfaraz Khan|IND|A|C|0.75|
+43|Kyle Mayers|WI|A|C|1.5|LSG
+43|Kamindu Mendis|SL|A|C|0.75|
+43|Matthew Short|AUS|A|C|0.75|
+44|Jason Behrendorff|AUS|L|C|1.5|MI
+44|Dushmantha Chameera|SL|L|C|0.75|LSG
+44|Nathan Ellis|AUS|L|C|1.25|PBKS
+44|Shamar Joseph|WI|L|C|0.75|LSG
+44|Josh Little|IRE|L|C|0.75|GT
+44|Shivam Mavi|IND|L|C|0.75|GT
+44|Jhye Richardson|AUS|L|C|1.5|DC
+44|Navdeep Saini|IND|L|C|0.75|RR
+45|Tanmay Agarwal|IND|B|U|0.3|
+45|Amandeep Khare|IND|B|U|0.3|
+45|Ayush Mhatre|IND|B|U|0.3|
+45|Salman Nizar|IND|B|U|0.3|
+45|Aniket Verma|IND|B|U|0.3|
+45|Sumeet Verma|IND|B|U|0.3|
+45|Manan Vohra|IND|B|U|0.3|
+45|Samarth Vyas|IND|B|U|0.3|
+46|Raj Angad Bawa|IND|A|U|0.3|
+46|Emanjot Chahal|IND|A|U|0.3|
+46|Musheer Khan|IND|A|U|0.3|
+46|Manvanth Kumar|IND|A|U|0.3|
+46|Mayank Rawat|IND|A|U|0.3|
+46|Suryansh Shedge|IND|A|U|0.3|
+46|Hritik Shokeen|IND|A|U|0.3|
+46|Sonu Yadav|IND|A|U|0.3|
+47|S Rithik Easwaran|IND|W|U|0.3|
+47|Anmol Malhotra|IND|W|U|0.3|
+47|Pradosh Paul|IND|W|U|0.3|
+47|Karteek Sharma|IND|W|U|0.3|
+47|Akash Singh (wk)|IND|W|U|0.3|
+47|Tejasvi Singh|IND|W|U|0.3|
+47|Siddharth Yadav|IND|W|U|0.3|
+48|Saurabh Dubey|IND|L|U|0.3|
+48|Aaqib Khan|IND|L|U|0.3|
+48|Kulwant Khejroliya|IND|L|U|0.3|
+48|Ankit Singh Rajpoot|IND|L|U|0.3|
+48|Divesh Sharma|IND|L|U|0.3|
+48|Naman Tiwari|IND|L|U|0.3|
+48|Prince Yadav|IND|L|U|0.3|
+49|Kunal Singh Chibb|IND|L|U|0.3|
+49|Yuvraj Chudasama|IND|L|U|0.3|
+49|Deepak Devadiga|IND|L|U|0.3|
+49|Ramesh Prasad|IND|L|U|0.3|
+49|Shivam Shukla|IND|L|U|0.3|
+49|Himanshu Singh (bowl)|IND|L|U|0.3|
+49|Tejpreet Singh|IND|L|U|0.3|
+50|Qais Ahmad|AFG|A|C|0.75|
+50|Charith Asalanka|SL|A|C|0.75|
+50|Michael Bracewell|NZ|A|C|1.5|
+50|Gudakesh Motie|WI|A|C|0.75|
+50|Daniel Mousley|ENG|A|C|0.75|
+50|Jamie Overton|ENG|A|C|1.5|
+50|Dunith Wellalage|SL|A|C|0.75|
+51|Ottneil Baartman|SA|L|C|0.75|
+51|Xavier Bartlett|AUS|L|C|0.75|
+51|Dilshan Madushanka|SL|L|C|0.75|MI
+51|Adam Milne|NZ|L|C|2|
+51|Lungi Ngidi|SA|L|C|1|DC
+51|William O'Rourke|NZ|L|C|1.5|
+51|Chetan Sakariya|IND|L|C|0.75|KKR
+51|Sandeep Warrier|IND|L|C|0.75|
+52|Musaif Ajaz|IND|B|U|0.3|
+52|Agni Chopra|IND|B|U|0.3|
+52|Abhimanyu Easwaran|IND|B|U|0.3|
+52|Sudip Gharami|IND|B|U|0.3|
+52|Shubham Khajuria|IND|B|U|0.3|
+52|Akhil Rawat|IND|B|U|0.3|
+52|Prateek Yadav|IND|B|U|0.3|
+53|Abdul Bazith|IND|A|U|0.3|
+53|K C Cariappa|IND|A|U|0.3|
+53|Yuvraj Chaudhary|IND|A|U|0.3|
+53|Aman Khan|IND|A|U|0.3|
+53|Sumit Kumar|IND|A|U|0.3|
+53|Kamlesh Nagarkoti|IND|A|U|0.3|
+53|Hardik Raj|IND|A|U|0.3|
+53|Harsh Tyagi|IND|A|U|0.3|
+54|M Ajnas|IND|W|U|0.3|
+54|Unmukt Chand|USA|W|A|0.3|
+54|Tejasvi Dahiya|IND|W|U|0.3|
+54|Sumit Ghadigaonkar|IND|W|U|0.3|
+54|Baba Indrajith|IND|W|U|0.3|
+54|Muhammed Khan|IND|W|U|0.3|
+54|Bhagmender Lather|IND|W|U|0.3|
+55|Baltej Dhanda|IND|L|U|0.3|
+55|Ali Khan|USA|L|A|0.3|
+55|Ravi Kumar|IND|L|U|0.3|
+55|Vineet Panwar|IND|L|U|0.3|
+55|Vidyadhar Patil|IND|L|U|0.3|
+55|Aradhya Shukla|IND|L|U|0.3|
+55|Abhinandan Singh|IND|L|U|0.3|
+56|Cooper Connolly|AUS|A|C|0.75|
+56|Dushan Hemantha|SL|A|C|0.75|
+56|Jason Holder|WI|A|C|2|
+56|Karim Janat|AFG|A|C|0.75|
+56|Jimmy Neesham|NZ|A|C|1.5|
+56|Daniel Sams|AUS|A|C|1.5|
+56|William Sutherland|AUS|A|C|0.75|
+57|Taskin Ahmed|BAN|L|C|1|
+57|Ben Dwarshuis|AUS|L|C|0.75|
+57|Obed McCoy|WI|L|C|1.25|
+57|Riley Meredith|AUS|L|C|1.5|
+57|Lance Morris|AUS|L|C|1.25|
+57|Olly Stone|ENG|L|C|0.75|
+57|Daniel Worrall|ENG|L|C|1.5|
+58|Pyla Avinash|IND|B|U|0.3|
+58|Kiran Chormale|IND|B|U|0.3|
+58|Ashish Dahariya|IND|B|U|0.3|
+58|Tushar Raheja|IND|B|U|0.3|
+58|Sarthak Ranjan|IND|B|U|0.3|
+58|Abhijeet Tomar|IND|B|U|0.3|
+59|Krish Bhagat|IND|A|U|0.3|
+59|Sohraab Dhaliwal|IND|A|U|0.3|
+59|Harsh Dubey|IND|A|U|0.3|
+59|Ramakrishna Ghosh|IND|A|U|0.3|
+59|Raj Limbani|IND|A|U|0.3|
+59|Ninad Rathva|IND|A|U|0.3|
+59|Vivrant Sharma|IND|A|U|0.3|
+59|Shiva Singh|IND|A|U|0.3|
+60|Sayed Irfan Aftab|IND|L|U|0.3|
+60|Anirudh Chowdhary|IND|L|U|0.3|
+60|Anshuman Hooda|IND|L|U|0.3|
+60|Siddharth Kaul|IND|L|U|0.4|
+60|Prashant Sai Painkra|IND|L|U|0.3|
+60|Satyanarayana Raju|IND|L|U|0.3|
+60|Yeddala Reddy|IND|L|U|0.3|
+61|Zak Foulkes|NZ|A|C|0.75|
+61|Chris Green|AUS|A|C|1|
+61|Shakib Al Hasan|BAN|A|C|1|
+61|Mehidy Hasan Miraz|BAN|A|C|1|
+61|Wiaan Mulder|SA|A|C|0.75|
+61|Dwaine Pretorius|SA|A|C|0.75|
+61|Dasun Shanaka|SL|A|C|0.75|
+62|Shoriful Islam|BAN|L|C|0.75|
+62|Blessing Muzarabani|ZIM|L|C|0.75|
+62|Matthew Potts|ENG|L|C|1.5|
+62|Tanzim Hasan Sakib|BAN|L|C|0.75|
+62|Benjamin Sears|NZ|L|C|1|
+62|Tim Southee|NZ|L|C|1.5|
+62|John Turner|ENG|L|C|1.5|
+63|Joshua Brown|AUS|B|U|0.3|
+63|Oliver Davies|AUS|B|U|0.3|
+63|Bevan Jacobs|NZ|B|U|0.3|
+63|Atharva Kale|IND|B|U|0.3|
+63|Abhishek Nair|IND|B|U|0.3|
+63|Vishwanath Pratap Singh|IND|B|U|0.3|
+64|Nasir Lone|IND|A|U|0.3|
+64|Brandon McMullen|SCO|A|A|0.3|
+64|S Midhun|IND|A|U|0.3|
+64|Abid Mushtaq|IND|A|U|0.3|
+64|Mahesh Pithiya|IND|A|U|0.3|
+64|Maramreddy Reddy|IND|A|U|0.3|
+64|Atit Sheth|IND|A|U|0.3|
+64|Jonty Sidhu|IND|A|U|0.3|
+65|Mohit Avasthi|IND|L|U|0.3|
+65|Faridoon Dawoodzai|AFG|L|U|0.3|
+65|Praful Hinge|IND|L|U|0.3|
+65|Pankaj Jaswal|IND|L|U|0.3|
+65|Vijay Kumar|IND|L|U|0.3|
+65|Ashok Sharma|IND|L|U|0.3|
+65|Mujtaba Yousuf|IND|L|U|0.3|
+66|Ashton Agar|AUS|A|C|1.25|
+66|Roston Chase|WI|A|C|0.75|
+66|Junior Dala|SA|A|C|0.75|
+66|Mahedi Hasan|BAN|A|C|0.75|
+66|Nangeyalia Kharote|AFG|A|C|0.75|
+66|Dan Lawrence|ENG|A|C|1|
+66|Nathan Smith|NZ|A|C|1|
+67|James Anderson|ENG|L|C|1.25|
+67|Kyle Jamieson|NZ|L|C|1.5|
+67|Chris Jordan|ENG|L|C|2|
+67|Hasan Mahmud|BAN|L|C|0.75|
+67|Tymal Mills|ENG|L|C|2|
+67|David Payne|ENG|L|C|1|
+67|Nahid Rana|BAN|L|C|0.75|
+68|Prayas Ray Barman|IND|B|U|0.3|
+68|Jafar Jamal|IND|B|U|0.3|
+68|Ayaz Khan|IND|B|U|0.3|
+68|Kaushik Maity|IND|B|U|0.3|
+68|Rituraj Sharma|IND|B|U|0.3|
+68|Vaibhav Suryavanshi|IND|B|U|0.3|
+69|Kartik Chadha|IND|A|U|0.3|
+69|Writtick Chatterjee|IND|A|U|0.3|
+69|Prerit Dutta|IND|A|U|0.3|
+69|Rajneesh Gurbani|IND|A|U|0.3|
+69|Shubhang Hegde|IND|A|U|0.3|
+69|Saransh Jain|IND|A|U|0.3|
+69|Ripal Patel|IND|A|U|0.3|
+69|Akash Vashisht|IND|A|U|0.3|
+70|Anirudh Kanwar|IND|L|U|0.3|
+70|Shubham Kapse|IND|L|U|0.3|
+70|Atif Mushtaq|IND|L|U|0.3|
+70|Dipesh Parwani|IND|L|U|0.3|
+70|Manish Reddy|IND|L|U|0.3|
+70|Chetan Sharma|IND|L|U|0.3|
+70|Avinash Singh|IND|L|U|0.3|
+71|Alick Athanaze|WI|A|C|0.75|
+71|Hilton Cartwright|AUS|A|C|0.75|
+71|Dominic Drakes|WI|A|C|1.25|
+72|Daryn Dupavillon|SA|L|C|0.75|
+71|Matthew Forde|WI|A|C|1.25|
+71|Patrick Kruger|SA|A|C|0.75|
+72|Lahiru Kumara|SL|L|C|0.75|
+71|Michael Neser|AUS|A|C|0.75|
+72|Richard Ngarava|ZIM|L|C|0.75|
+72|Wayne Parnell|SA|L|C|1|
+71|Keemo Paul|WI|A|C|1.25|
+71|Odean Smith|WI|A|C|0.75|
+72|Andrew Tye|AUS|L|C|0.75|
+73|Ajay Ahlawat|IND|A|U|0.4|
+73|Corbin Bosch|SA|A|U|0.3|
+73|Mayank Gusain|IND|A|U|0.3|
+73|Mukhtar Hussain|IND|A|U|0.3|
+73|Girinath Reddy|IND|A|U|0.3|
+73|Jalaj Saxena|IND|A|U|0.4|
+73|Yajas Sharma|IND|A|U|0.3|
+73|Sanjay Yadav|IND|A|U|0.3|
+74|Vishal Godara|IND|L|U|0.3|
+74|Eshan Malinga|SL|L|U|0.3|
+74|Samarth Nagraj|IND|L|U|0.3|
+74|Abhishek Saini|IND|L|U|0.3|
+74|Dumindu Sewmina|SL|L|U|0.3|
+74|Pradyuman Kumar Singh|IND|L|U|0.3|
+74|Vasu Vats|IND|L|U|0.3|
+75|Umang Kumar|IND|A|U|0.3|
+75|Mohamed Ali|IND|A|U|0.3|
+75|Atharva Ankolekar|IND|A|U|0.3|
+75|Vaisakh Chandran|IND|A|U|0.3|
+75|Auqib Dar|IND|A|U|0.3|
+75|Rohit Rayudu|IND|A|U|0.3|
+75|Uday Saharan|IND|A|U|0.3|
+75|Ayush Vartak|IND|A|U|0.3|
+76|Baba Aparajith|IND|A|U|0.3|
+76|Sumit Kumar Beniwal|IND|A|U|0.3|
+76|Nishunk Birla|IND|A|U|0.3|
+76|Digvijay Deshmukh|IND|A|U|0.3|
+76|Lakshay Jain|IND|A|U|0.3|
+76|Duan Jansen|SA|A|U|0.3|
+76|Kritagya Singh|IND|A|U|0.3|
+76|P Vignesh|IND|A|U|0.3|
+77|Sabhay Chadha|IND|A|U|0.3|
+77|Ben Howell|ENG|A|U|0.5|
+77|Hemanth Kumar|IND|A|U|0.3|
+77|Rohan Rana|IND|A|U|0.3|
+77|Bharat Sharma|IND|A|U|0.3|
+77|Pratham Singh|IND|A|U|0.3|
+77|Tripurana Vijay|IND|A|U|0.3|
+77|Ravi Yadav|IND|A|U|0.3|
+78|Arjun Azad|IND|A|U|0.3|
+78|Abhay Choudhary|IND|A|U|0.3|
+78|Gaurav Gambhir|IND|A|U|0.3|
+78|Shubham Garhwal|IND|A|U|0.3|
+78|Tejasvi Jaiswal|IND|A|U|0.3|
+78|Sairaj Patil|IND|A|U|0.3|
+78|Madhav Tiwari|IND|A|U|0.3|
+78|Kamal Tripathi|IND|A|U|0.3|
+79|Prashant Chauhan|IND|A|U|0.3|
+79|Yash Dabas|IND|A|U|0.3|
+79|Dhruv Kaushik|IND|A|U|0.3|
+79|Khrievitso Kense|IND|A|U|0.3|
+79|Akash Parkar|IND|A|U|0.3|
+79|Vignesh Puthur|IND|A|U|0.3|
+79|Tripuresh Singh|IND|A|U|0.3|
+79|Vijay Yadav|IND|A|U|0.3|
+6|Jofra Archer|ENG|L|C|2|`;
+const SET_CODE=["FS","M1","M2","BA1","AL1","WK1","FA1","SP1","UBA1","UAL1","UWK1","UFA1","USP1","BA2","AL2","WK2","FA2","SP2","UBA2","UAL2","UWK2","UFA2","USP2","BA3","AL3","WK3","FA3","SP3","UBA3","UAL3","UWK3","UFA3","USP3","BA4","AL4","WK4","FA4","UBA4","UAL4","UWK4","UFA4","USP4","BA5","AL5","FA5","UBA5","UAL5","UWK5","UFA5","USP5","AL6","FA6","UBA6","UAL6","UWK6","UFA6","AL7","FA7","UBA7","UAL7","UFA7","AL8","FA8","UBA8","UAL8","UFA8","AL9","FA9","UBA9","UAL9","UFA9","AL10","FA10","UAL10","UFA10","UAL11","UAL12","UAL13","UAL14","UAL15"];
+const SET_KIND={FS:"Franchise stars",M:"Marquee",BA:"Capped batters",AL:"Capped all-rounders",WK:"Capped wicket-keepers",FA:"Capped fast bowlers",SP:"Capped spinners",UBA:"Uncapped batters",UAL:"Uncapped all-rounders",UWK:"Uncapped wicket-keepers",UFA:"Uncapped fast bowlers",USP:"Uncapped spinners"};
+const setName=sn=>{const c=SET_CODE[sn]||"";return c+" · "+(SET_KIND[c.replace(/\d+$/,"")]||"Players")};
+const REG_ROLE={};MEGA_REG.split("\n").forEach(l=>{const p=l.split("|");REG_ROLE[p[1]]={B:"BAT",A:"AR",W:"WK",L:"BOWL"}[p[3]]});
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 function iplBase(v){return v>=2?2:v>=1.5?1.5:v>=1?1:v>=0.75?0.75:v>=0.5?0.5:0.3}
 function iplSet(v){return v>=10?"Marquee set":v>=4?"Capped stars":v>=1.5?"Capped players":v>=0.75?"Value picks":"Uncapped talent"}
@@ -888,11 +1477,15 @@ function buildPool(mode,seed){
       pool.push({name:n,real:team,rk:LLC_BY_NAME[team],value:r2(m?rr(15,22):nt?rr(4,8):rr(0.5,2)),base:m?2:nt?1:0.3,set:m?"Marquee legend":nt?"International star":"Legend"});
     }));
   }else{
-    pool=((mode==="mega"||mode==="megaopen")?MEGA_RAW:MINI_RAW).trim().split("\n").map(l=>{const p=l.split("|"),v=parseFloat(p[2]);return{name:p[0],real:p[1],rk:p[1],value:v,base:iplBase(v),set:iplSet(v)}});
-    if((mode==="mega"||mode==="megaopen"))Object.entries(MEGA_RET).forEach(([k,[,list]])=>list.split(";").forEach(x=>{const [n,v]=x.split("|");pool.push({name:n,real:k,rk:k,value:+v,base:UNCAP25.has(n)?0.3:2,set:iplSet(+v),rret:true,prev:k})}));
+    if(mode==="mega"||mode==="megaopen"){
+      const sold={};MEGA_RAW.trim().split("\n").forEach(l=>{const p=l.split("|");sold[p[0]]=p});
+      pool=MEGA_REG.split("\n").map(l=>{const p=l.split("|"),sd=sold[p[1]],b=+p[5],sn=+p[0];
+        return{name:p[1],real:sd?sd[1]:null,rk:sd?sd[1]:null,value:sd?parseFloat(sd[2]):r2(b*rr(0.45,1.3)),base:b,sn,set:setName(sn),ct:p[2],cu:p[4],uns:!sd,prev:p[6]||undefined}});
+    }else pool=MINI_RAW.trim().split("\n").map(l=>{const p=l.split("|"),v=parseFloat(p[2]);return{name:p[0],real:p[1],rk:p[1],value:v,base:iplBase(v),set:iplSet(v)}});
+    if((mode==="mega"||mode==="megaopen"))Object.entries(MEGA_RET).forEach(([k,[,list]])=>list.split(";").forEach(x=>{const [n,v]=x.split("|");pool.push({name:n,real:k,rk:k,value:+v,base:UNCAP25.has(n)?0.3:2,sn:0,set:setName(0),ct:"",cu:UNCAP25.has(n)?"U":"C",rret:true,prev:k})}));
   }
   pool.forEach(p=>p.sk=p.value*(1+rr(-0.25,0.25)));
-  pool.sort((a,b)=>b.sk-a.sk||(a.name<b.name?-1:1));
+  pool.sort((a,b)=>(a.sn||0)-(b.sn||0)||b.sk-a.sk||(a.name<b.name?-1:1));
   pool.forEach((p,i)=>p.i=i);
   pool.all=pool;
   if((mode==="mega"||mode==="megaopen")){
@@ -926,6 +1519,7 @@ const UNCAP25=new Set(["MS Dhoni","Abishek Porel","Rahul Tewatia","Shahrukh Khan
  "Sameer Rizvi","Simarjeet Singh","Mukesh Choudhary","Kumar Kushagra","Rasikh Dar","Abhinav Manohar","Manav Suthar","Darshan Nalkande","Mohit Sharma","Angkrish Raghuvanshi","Vaibhav Arora","Suyash Sharma","Anukul Roy",
  "Yash Thakur","Arshad Khan","M Siddharth","Yudhvir Singh","Arshin Kulkarni","Nehal Wadhera","Naman Dhir","Akash Madhwal","Anshul Kamboj","Shreyas Gopal","Arjun Tendulkar","Atharva Taide","Harpreet Brar","Ashutosh Sharma",
  "Mahipal Lomror","Anuj Rawat","Vyshak Vijaykumar","Swapnil Singh","Karn Sharma","Shubham Dubey","Abdul Samad","Mayank Markande"]);
+MEGA_REG.split("\n").forEach(l=>{const p=l.split("|");if(p[4]==="U")UNCAP25.add(p[1])});
 const RET_SLABS=[18,14,11,18,14],RET_MS=90000;
 // IPL 2024 team of players sold at the 2025 mega auction (decides who can use an RTM card)
 const PREV24={"Arshdeep Singh":"PBKS","Kagiso Rabada":"PBKS","Shreyas Iyer":"KKR","Jos Buttler":"RR","Mitchell Starc":"KKR","Rishabh Pant":"DC","David Miller":"GT","Yuzvendra Chahal":"RR","Mohammed Siraj":"RCB","Liam Livingstone":"PBKS","KL Rahul":"LSG","Aiden Markram":"SRH","Rahul Tripathi":"SRH","Jake Fraser-McGurk":"DC","Harshal Patel":"PBKS","Rachin Ravindra":"CSK","Ravichandran Ashwin":"RR","Venkatesh Iyer":"KKR","Marcus Stoinis":"LSG","Mitchell Marsh":"DC","Glenn Maxwell":"RCB","Quinton de Kock":"LSG","Phil Salt":"KKR","Rahmanullah Gurbaz":"KKR","Ishan Kishan":"MI","Jitesh Sharma":"PBKS","Avesh Khan":"RR","Anrich Nortje":"DC","Khaleel Ahmed":"DC","T Natarajan":"SRH","Trent Boult":"RR","Maheesh Theekshana":"CSK","Rahul Chahar":"PBKS","Noor Ahmad":"GT","Atharva Taide":"PBKS","Nehal Wadhera":"MI","Angkrish Raghuvanshi":"KKR","Abhinav Manohar":"GT","Sameer Rizvi":"CSK","Naman Dhir":"MI","Abdul Samad":"SRH","Harpreet Brar":"PBKS","Vijay Shankar":"GT","Mahipal Lomror":"RCB","Ashutosh Sharma":"PBKS","Kumar Kushagra":"DC","Anuj Rawat":"RCB","Rasikh Dar":"DC","Akash Madhwal":"MI","Mohit Sharma":"GT","Vyshak Vijaykumar":"RCB","Vaibhav Arora":"KKR","Yash Thakur":"LSG","Simarjeet Singh":"CSK","Suyash Sharma":"KKR","Karn Sharma":"RCB","Mayank Markande":"SRH","Manav Suthar":"GT","Rovman Powell":"RR","Faf du Plessis":"RCB","Washington Sundar":"SRH","Sam Curran":"PBKS","Marco Jansen":"SRH","Krunal Pandya":"LSG","Nitish Rana":"KKR","Tushar Deshpande":"CSK","Gerald Coetzee":"MI","Bhuvneshwar Kumar":"SRH","Mukesh Kumar":"DC","Deepak Chahar":"CSK","Akash Deep":"RCB","Lockie Ferguson":"RCB","Shubham Dubey":"RR","Anshul Kamboj":"MI","Arshad Khan":"LSG","Darshan Nalkande":"GT","Swapnil Singh":"RCB","Mukesh Choudhary":"CSK","M Siddharth":"LSG","Manish Pandey":"KKR","Shahbaz Ahamad":"SRH","Tim David":"MI","Deepak Hooda":"LSG","Will Jacks":"RCB","Azmatullah Omarzai":"GT","R Sai Kishore":"GT","Romario Shepherd":"MI","Spencer Johnson":"GT","Ishant Sharma":"DC","Nuwan Thushara":"MI","Jaydev Unadkat":"SRH","Yudhvir Singh":"LSG","Mitchell Santner":"CSK","Kuldeep Sen":"RR","Reece Topley":"RCB","Dushmantha Chameera":"KKR","Nathan Ellis":"PBKS","Shamar Joseph":"LSG","Devdutt Padikkal":"LSG","Shreyas Gopal":"MI","Ajinkya Rahane":"CSK","Donovan Ferreira":"RR","Anukul Roy":"KKR","Moeen Ali":"CSK","Umran Malik":"SRH","Arshin Kulkarni":"LSG","Kwena Maphaka":"MI","Arjun Tendulkar":"MI","Lizaad Williams":"DC"};
@@ -945,8 +1539,8 @@ const RET25={"Matheesha Pathirana":"CSK","Ravi Bishnoi":"LSG","Andre Russell":"K
 Object.entries(MEGA_RET).forEach(([k,[,l]])=>l.split(";").forEach(x=>{const n=x.split("|")[0];if(!(n in RET25))RET25[n]=k}));
 const RTM_CARDS=2,RTM_MS=8000;
 const MODES={
-  mega:{key:"mega",name:"Mega Auction 2025",teams:IPL_TEAMS,purse:120,pickRet:true,rtm:true,rtmN:()=>0,max:25,minFill:18,minBase:0.3,interest:0.5,cap:0.2},
-  megaopen:{key:"megaopen",name:"Mega Auction · No Retention",teams:IPL_TEAMS,purse:120,max:25,minFill:18,minBase:0.3,interest:0.5,cap:0.2},
+  mega:{key:"mega",sets:true,name:"Mega Auction 2025",teams:IPL_TEAMS,purse:120,pickRet:true,rtm:true,rtmN:()=>0,max:25,minFill:18,minBase:0.3,interest:0.5,cap:0.2},
+  megaopen:{key:"megaopen",sets:true,name:"Mega Auction · No Retention",teams:IPL_TEAMS,purse:120,max:25,minFill:18,minBase:0.3,interest:0.5,cap:0.2},
   mini:{key:"mini",name:"Mini Auction 2026",teams:IPL_TEAMS,purse:30,retain:true,rtm:true,lockFmt:true,retData:MINI_RET,rtmN:()=>RTM_CARDS,max:25,minFill:0,minBase:0.3,interest:0.45,cap:0.4},
   legends:{key:"legends",name:"Legends Auction",teams:IPL_TEAMS,purse:150,max:25,minFill:8,minBase:0.3,interest:0.6,cap:0.16}
 };
@@ -958,14 +1552,14 @@ const inc=b=>b<1?0.05:b<2?0.1:b<5?0.2:b<10?0.25:b<20?0.5:1;
 const reserveFor=(M,n)=>Math.max(0,M.minFill-n-1)*M.minBase;
 const affordFor=(M,purse,n,amt)=>n<M.max&&r2(purse-amt)>=r2(reserveFor(M,n))-1e-9;
 const allTeams=M=>Object.keys(M.teams);
-const realLine=(M,p)=>p.rret?`In real life: retained by ${p.real} for ${fmt(p.value)}`:M.key==="legends"?`In real life: picked by ${p.real}`:`In real life: ${p.real} bought him for ${fmt(p.value)}`;
+const realLine=(M,p)=>p.uns?`In real life: went unsold (base ${fmt(p.base)})`:p.rret?`In real life: retained by ${p.real} for ${fmt(p.value)}`:M.key==="legends"?`In real life: picked by ${p.real}`:`In real life: ${p.real} bought him for ${fmt(p.value)}`;
 
 /* ---------- real IPL career stats (2008–2026 seasons, from ball-by-ball data) ---------- */
 // [role, matches, runs, highest, average, strike rate, 50s, 100s, wickets, economy, best]
-const STATS={"AM Ghazanfar":["BOWL",11,2,2,null,66.7,0,0,15,10.02,"2/17"],"Aaron Finch":["BAT",92,2092,88,24.9,128.0,15,0,1,9.35,"1/11"],"Abdul Samad":["BAT",71,859,45,19.1,148.6,0,0,2,13.16,"1/9"],"Abhimanyu Mithun":["BOWL",16,34,11,6.8,130.8,0,0,7,9.83,"2/37"],"Abhinandan Singh":["BOWL",3,0,0,null,null,0,0,3,12.62,"2/30"],"Abhinav Manohar":["BAT",27,292,43,15.4,124.3,0,0,0,null,null],"Abhishek Sharma":["BAT",92,2379,141,29.4,171.3,13,2,11,9.04,"2/4"],"Abishek Porel":["BAT",36,769,65,25.6,145.4,4,0,0,null,null],"Adam Milne":["BOWL",11,25,15,6.2,80.6,0,0,7,9.73,"2/21"],"Adam Zampa":["BOWL",22,15,7,3.0,62.5,0,0,31,8.38,"6/19"],"Aiden Markram":["BAT",69,1671,68,29.8,135.4,10,0,6,9.61,"2/30"],"Ajinkya Rahane":["BAT",212,5367,105,30.2,125.6,35,2,1,5.0,"1/5"],"Akash Deep":["BOWL",14,25,17,8.3,178.6,0,0,10,11.83,"3/45"],"Akash Madhwal":["BOWL",17,8,4,null,57.1,0,0,23,10.06,"5/5"],"Akash Singh":["BOWL",12,0,0,null,null,0,0,13,9.86,"3/26"],"Akeal Hosein":["BOWL",8,21,16,null,161.5,0,0,9,8.3,"4/17"],"Akshat Raghuwanshi":["BAT",3,29,18,14.5,116.0,0,0,0,null,null],"Andre Russell":["AR",139,2655,88,27.9,174.1,12,0,123,9.51,"5/15"],"Andrew Tye":["BOWL",30,91,25,10.1,119.7,0,0,42,8.57,"5/17"],"Angkrish Raghuvanshi":["WK",35,885,82,34.0,145.6,7,0,0,null,null],"Aniket Verma":["BAT",24,315,74,21.0,160.7,1,0,0,null,null],"Ankit Rajpoot":["BOWL",29,26,8,5.2,63.4,0,0,24,9.2,"5/14"],"Anrich Nortje":["BOWL",49,49,23,7.0,98.0,0,0,61,9.09,"3/33"],"Anshul Kamboj":["BOWL",25,74,19,24.7,142.3,0,0,31,9.97,"3/13"],"Anuj Rawat":["BAT",24,318,66,19.9,119.1,1,0,0,null,null],"Anukul Roy":["BOWL",25,78,29,9.8,121.9,0,0,15,8.9,"2/19"],"Anureet Singh":["BOWL",23,36,15,9.0,76.6,0,0,18,9.07,"3/23"],"Arjun Tendulkar":["BOWL",6,18,13,18.0,128.6,0,0,4,9.28,"1/9"],"Arshad Khan":["BOWL",26,142,58,23.7,149.5,1,0,18,11.03,"3/22"],"Arshdeep Singh":["BOWL",97,32,10,5.3,68.1,0,0,111,9.19,"5/32"],"Arshin Kulkarni":["BAT",4,26,17,6.5,78.8,0,0,0,null,null],"Asad Pathan":["BOWL",8,39,14,7.8,169.6,0,0,0,9.69,null],"Ashok Sharma":["BOWL",6,1,1,null,25.0,0,0,6,10.86,"2/32"],"Ashutosh Sharma":["BAT",32,564,66,29.7,168.9,2,0,0,null,null],"Ashwani Kumar":["BOWL",10,1,1,null,16.7,0,0,17,10.95,"4/24"],"Atharva Taide":["BAT",10,260,66,26.0,146.9,2,0,0,24.0,null],"Avesh Khan":["BOWL",82,68,19,17.0,158.1,0,0,93,9.28,"4/24"],"Axar Patel":["AR",177,2089,66,21.5,133.7,4,0,139,7.43,"4/21"],"Ayush Badoni":["BAT",66,1178,74,25.6,140.9,7,0,4,9.22,"2/4"],"Ayush Mhatre":["BAT",13,441,94,33.9,183.8,3,0,0,null,null],"Azmatullah Omarzai":["BOWL",20,151,38,15.1,149.5,0,0,15,9.63,"2/27"],"Ben Dunk":["BAT",3,40,20,13.3,114.3,0,0,0,null,null],"Ben Dwarshuis":["BOWL",1,0,0,null,null,0,0,1,12.75,"1/51"],"Bharath Chipli":["BAT",23,280,61,18.7,111.6,1,0,0,20.0,null],"Bhuvneshwar Kumar":["BOWL",206,354,27,9.3,93.9,0,0,226,7.71,"5/19"],"Bipul Sharma":["BOWL",33,187,35,23.4,152.0,0,0,17,8.06,"2/13"],"Brijesh Sharma":["BOWL",13,2,1,null,50.0,0,0,14,9.89,"2/18"],"Cameron Green":["AR",43,1029,100,38.1,151.1,4,1,23,9.44,"2/12"],"Carlos Brathwaite":["AR",16,181,43,13.9,163.1,0,0,13,8.95,"3/47"],"Chris Gayle":["BAT",141,4997,175,39.7,149.3,32,6,18,7.9,"3/21"],"Cooper Connolly":["BAT",14,491,107,44.6,163.1,2,1,0,null,null],"Corbin Bosch":["AR",9,97,32,32.3,154.0,0,0,13,9.2,"4/26"],"Danish Malewar":["BAT",2,2,2,1.0,40.0,0,0,0,null,null],"Darshan Nalkande":["BOWL",6,12,12,6.0,100.0,0,0,6,10.57,"2/21"],"David Miller":["BAT",152,3288,101,35.4,139.4,14,1,0,null,null],"Deepak Chahar":["BOWL",103,142,39,14.2,137.9,0,0,96,8.3,"4/13"],"Deepak Hooda":["BAT",125,1497,64,17.6,127.6,8,0,10,8.64,"2/16"],"Devdutt Padikkal":["BAT",90,2270,101,26.7,133.1,14,1,0,null,null],"Devon Conway":["BAT",29,1080,92,43.2,139.7,11,0,0,null,null],"Dewald Brevis":["BAT",27,606,57,25.2,146.0,2,0,1,16.0,"1/8"],"Dhruv Jurel":["WK",57,1195,81,31.4,154.2,10,0,0,null,null],"Dinesh Karthik":["WK",257,4843,97,26.3,135.3,22,0,0,null,null],"Donovan Ferreira":["BAT",18,326,69,27.2,170.7,2,0,1,13.67,"1/14"],"Dushmantha Chameera":["BOWL",21,53,17,13.2,117.8,0,0,13,9.82,"2/17"],"Eshan Malinga":["BOWL",22,7,5,7.0,41.2,0,0,33,9.2,"4/32"],"Faf du Plessis":["BAT",154,4773,96,35.1,135.8,39,0,0,16.0,null],"Faiz Fazal":["BAT",12,183,45,18.3,105.8,0,0,0,10.0,null],"Fazalhaq Farooqi":["BOWL",12,5,2,null,33.3,0,0,6,10.32,"2/32"],"Gerald Coetzee":["BOWL",14,31,12,5.2,93.9,0,0,15,10.37,"4/34"],"Glenn Maxwell":["AR",141,2820,95,23.9,155.1,18,0,41,8.3,"2/15"],"Glenn Phillips":["BAT",14,132,25,12.0,121.1,0,0,2,8.0,"1/10"],"Gurjapneet Singh":["BOWL",8,0,0,null,null,0,0,4,9.26,"1/7"],"Gurkeerat Singh":["WK",41,511,65,21.3,121.1,2,0,5,7.46,"2/15"],"Gurnoor Brar":["BOWL",1,0,0,null,null,0,0,0,14.0,null],"Harbhajan Singh":["BOWL",163,833,64,15.1,137.9,1,0,150,7.08,"5/18"],"Hardik Pandya":["AR",162,2964,91,27.7,146.4,10,0,82,9.36,"5/36"],"Harpreet Brar":["BOWL",51,249,29,20.8,120.9,0,0,37,8.0,"4/30"],"Harry Brook":["BAT",11,190,100,21.1,123.4,0,1,0,null,null],"Harsh Dubey":["BOWL",11,13,9,6.5,144.4,0,0,13,10.19,"3/12"],"Harshal Patel":["BOWL",123,280,36,8.8,117.6,0,0,151,8.92,"5/27"],"Harshit Rana":["BOWL",33,59,34,9.8,105.4,0,0,40,9.51,"3/24"],"Hashim Amla":["BAT",16,577,104,44.4,141.8,3,2,0,null,null],"Heinrich Klaasen":["WK",64,2104,105,42.1,166.7,13,2,0,null,null],"Himmat Singh":["BAT",9,92,40,30.7,133.3,0,0,0,null,null],"Iqbal Abdulla":["BOWL",49,88,33,44.0,104.8,0,0,40,7.23,"3/24"],"Irfan Pathan":["AR",103,1150,60,21.7,121.1,1,0,80,7.78,"3/24"],"Ishan Kishan":["WK",134,3600,106,30.5,143.5,23,1,0,24.0,null],"Ishant Sharma":["BOWL",117,57,10,9.5,82.6,0,0,96,8.38,"5/12"],"Isuru Udana":["BOWL",10,15,10,5.0,136.4,0,0,8,9.72,"2/41"],"Jacob Bethell":["BAT",9,163,55,18.1,140.5,1,0,0,null,null],"Jacob Duffy":["BOWL",6,0,0,null,null,0,0,9,10.96,"3/22"],"Jake Fraser-McGurk":["BAT",15,385,84,25.7,199.5,4,0,0,null,null],"Jamie Overton":["AR",13,151,43,30.2,162.4,0,0,14,9.76,"4/18"],"Jason Holder":["BOWL",57,324,47,12.5,123.2,0,0,70,8.58,"4/24"],"Jasprit Bumrah":["BOWL",158,75,16,9.4,87.2,0,0,190,7.34,"5/10"],"Javon Searles":["BOWL",4,8,6,8.0,133.3,0,0,2,12.71,"1/24"],"Jayant Yadav":["BOWL",20,40,23,10.0,111.1,0,0,8,6.85,"1/8"],"Jaydev Unadkat":["BOWL",116,201,26,12.6,118.9,0,0,114,8.94,"5/25"],"Jitesh Sharma":["WK",71,1107,85,23.1,152.5,1,0,0,null,null],"Jofra Archer":["BOWL",68,326,32,13.0,144.9,0,0,84,8.19,"3/14"],"Jos Buttler":["WK",138,4647,124,39.4,149.7,28,7,0,null,null],"Josh Hazlewood":["BOWL",52,19,7,19.0,63.3,0,0,72,8.62,"4/12"],"Josh Inglis":["WK",17,544,85,38.9,173.2,4,0,0,null,null],"KC Cariappa":["BOWL",11,24,12,8.0,114.3,0,0,8,9.67,"2/16"],"KL Rahul":["WK",160,5828,152,45.5,139.2,45,6,0,null,null],"Kagiso Rabada":["BOWL",101,262,44,13.1,109.6,0,0,151,8.77,"4/21"],"Kamlesh Nagarkoti":["BOWL",12,22,8,5.5,66.7,0,0,5,9.5,"2/13"],"Karim Janat":["BAT",1,0,0,null,null,0,0,0,30.0,null],"Karn Sharma":["BOWL",90,352,39,13.5,119.3,0,0,83,8.38,"4/16"],"Kartik Sharma":["BAT",11,295,71,32.8,136.6,2,0,0,null,null],"Kartik Tyagi":["BOWL",34,24,7,3.4,92.3,0,0,33,9.98,"3/22"],"Karun Nair":["BAT",86,1712,89,23.5,131.3,11,0,0,null,null],"Khaleel Ahmed":["BOWL",76,2,1,0.4,22.2,0,0,91,8.96,"3/21"],"Krunal Pandya":["AR",158,1982,86,22.8,133.8,3,0,107,7.57,"4/45"],"Kuldeep Sen":["BOWL",12,0,0,null,0.0,0,0,14,9.63,"4/20"],"Kuldeep Yadav":["BOWL",111,210,35,11.7,83.0,0,0,112,8.29,"4/14"],"Kulwant Khejroliya":["BOWL",9,0,0,null,null,0,0,6,11.01,"2/33"],"Kumar Kartikeya Singh":["BOWL",16,12,6,3.0,70.6,0,0,12,8.66,"2/22"],"Kumar Kushagra":["BAT",5,21,18,5.2,100.0,0,0,0,null,null],"Kunal Rathore":["BAT",1,0,0,0.0,0.0,0,0,0,null,null],"Kwena Maphaka":["BOWL",4,8,8,null,400.0,0,0,2,13.0,"1/23"],"Kyle Jamieson":["BOWL",15,77,16,15.4,105.5,0,0,16,10.12,"3/41"],"Lhuan-dre Pretorius":["BAT",2,7,7,3.5,87.5,0,0,0,null,null],"Liam Livingstone":["AR",51,1066,94,25.4,155.2,7,0,13,9.02,"3/27"],"Lizaad Williams":["BOWL",2,1,1,null,50.0,0,0,1,11.51,"1/37"],"Lockie Ferguson":["BOWL",52,72,24,24.0,153.2,0,0,54,9.19,"5/17"],"Luke Wood":["BOWL",2,9,9,null,300.0,0,0,1,15.5,"1/68"],"Lungi Ngidi":["BOWL",28,4,3,2.0,44.4,0,0,42,8.41,"4/10"],"M Siddharth":["BOWL",9,0,0,null,null,0,0,9,9.05,"2/35"],"MS Dhoni":["WK",277,5439,84,38.3,137.5,24,0,0,null,null],"Madhav Tiwari":["BOWL",5,21,18,21.0,175.0,0,0,4,9.18,"2/27"],"Maheesh Theekshana":["BOWL",38,17,7,5.7,50.0,0,0,36,8.27,"4/33"],"Mahipal Lomror":["BAT",40,527,54,18.2,141.3,1,0,1,8.47,"1/22"],"Manav Suthar":["BOWL",5,1,1,1.0,50.0,0,0,2,11.75,"1/19"],"Manish Pandey":["BAT",180,4021,114,29.4,122.0,22,1,0,null,null],"Manoj Bhandage":["BAT",1,1,1,1.0,25.0,0,0,0,null,null],"Marco Jansen":["BOWL",49,192,34,12.8,110.3,0,0,45,9.6,"3/17"],"Marcus Stoinis":["AR",123,2242,124,28.7,147.5,10,1,46,9.93,"4/15"],"Martin Guptill":["BAT",13,271,50,22.6,137.6,1,0,0,null,null],"Matheesha Pathirana":["BOWL",33,0,0,null,null,0,0,47,8.66,"4/28"],"Matt Henry":["BOWL",9,7,5,3.5,70.0,0,0,4,11.52,"2/54"],"Matthew Breetzke":["BAT",1,14,14,14.0,116.7,0,0,0,null,null],"Matthew Short":["BAT",9,177,36,19.7,123.8,0,0,0,8.93,null],"Mayank Markande":["BOWL",40,48,18,16.0,114.3,0,0,37,9.16,"4/15"],"Mayank Rawat":["BAT",1,0,0,null,null,0,0,0,null,null],"Mayank Yadav":["BOWL",10,5,5,5.0,100.0,0,0,9,10.15,"3/14"],"Mitchell Marsh":["AR",68,1855,117,30.9,148.5,12,2,37,8.52,"4/25"],"Mitchell Owen":["BAT",1,0,0,0.0,0.0,0,0,0,null,null],"Mitchell Santner":["BOWL",35,136,22,17.0,110.6,0,0,30,7.51,"3/11"],"Mitchell Starc":["BOWL",58,111,29,9.2,91.7,0,0,76,8.83,"5/35"],"Moeen Ali":["AR",73,1167,93,22.0,139.8,6,0,41,7.23,"4/26"],"Mohammed Shami":["BOWL",132,115,21,6.1,103.6,0,0,145,8.66,"4/11"],"Mohammed Siraj":["BOWL",125,117,14,9.8,84.2,0,0,128,8.78,"4/17"],"Mohit Rathee":["BOWL",1,1,1,null,50.0,0,0,0,14.5,null],"Mohit Sharma":["BOWL",120,125,21,6.9,91.9,0,0,134,8.77,"5/10"],"Mohsin Khan":["BOWL",31,25,13,5.0,89.3,0,0,38,8.41,"5/23"],"Monu Kumar":["BOWL",1,0,0,null,null,0,0,0,10.0,null],"Mukesh Choudhary":["BOWL",24,8,4,8.0,100.0,0,0,25,9.58,"4/46"],"Mukesh Kumar":["BOWL",42,10,6,10.0,55.6,0,0,42,10.59,"4/33"],"Musheer Khan":["BOWL",1,0,0,0.0,0.0,0,0,1,13.5,"1/27"],"Mustafizur Rahman":["BOWL",60,13,8,6.5,54.2,0,0,65,8.12,"4/29"],"Naman Dhir":["BAT",37,710,62,27.3,164.0,3,0,0,8.77,null],"Naman Ojha":["WK",113,1554,94,20.7,118.4,6,0,0,null,null],"Nandre Burger":["BOWL",18,14,10,14.0,155.6,0,0,21,9.67,"2/21"],"Nathan Ellis":["BOWL",17,19,12,4.8,76.0,0,0,19,8.67,"4/30"],"Nehal Wadhera":["BAT",45,784,70,23.8,140.0,4,0,0,7.76,null],"Nicholas Pooran":["WK",104,2527,87,30.4,163.8,15,0,0,null,null],"Nishant Sindhu":["BAT",8,63,22,12.6,126.0,0,0,0,null,null],"Nitish Kumar Reddy":["AR",42,787,76,29.1,145.5,3,0,13,10.65,"2/17"],"Nitish Rana":["BAT",127,3078,91,27.5,137.7,22,0,10,9.03,"2/11"],"Noor Ahmad":["BOWL",51,31,8,2.8,53.4,0,0,61,8.17,"4/18"],"Nuwan Thushara":["BOWL",8,0,0,null,null,0,0,9,9.43,"3/28"],"Parvez Rasool":["BOWL",11,17,10,8.5,85.0,0,0,4,8.21,"1/20"],"Parvinder Awana":["BOWL",33,5,4,2.5,35.7,0,0,39,8.27,"4/34"],"Pat Cummins":["BOWL",80,642,66,19.5,152.5,3,0,87,8.89,"4/34"],"Pathum Nissanka":["BAT",10,278,62,27.8,158.9,2,0,0,null,null],"Pawan Negi":["BOWL",50,365,36,14.0,126.3,0,0,34,7.87,"4/18"],"Pawan Suyal":["BOWL",5,0,0,null,null,0,0,2,9.44,"1/21"],"Phil Salt":["BAT",40,1258,89,34.0,174.5,12,0,0,null,null],"Piyush Chawla":["BOWL",192,624,24,11.1,110.8,0,0,192,7.96,"4/17"],"Praful Hinge":["BOWL",7,3,3,3.0,33.3,0,0,14,11.73,"4/34"],"Prashant Solanki":["BOWL",2,0,0,null,null,0,0,2,6.33,"2/20"],"Prashant Veer":["BAT",6,90,43,45.0,134.3,0,0,0,12.5,null],"Prasidh Krishna":["BOWL",78,15,6,5.0,48.4,0,0,91,8.99,"4/28"],"Pravin Dubey":["BOWL",5,23,16,23.0,69.7,0,0,2,8.54,"1/19"],"Prince Yadav":["BOWL",20,5,4,null,45.5,0,0,19,9.17,"3/32"],"Prithvi Shaw":["BAT",79,1892,99,23.9,147.5,14,0,0,null,null],"Priyansh Arya":["BAT",31,909,103,29.3,193.0,6,1,0,null,null],"Quinton de Kock":["WK",118,3444,140,31.0,134.9,24,3,0,null,null],"R Sai Kishore":["BOWL",28,18,13,4.5,112.5,0,0,33,8.99,"4/33"],"Rachin Ravindra":["BAT",18,413,65,24.3,143.9,2,0,0,3.5,null],"Raghu Sharma":["BOWL",6,0,0,null,null,0,0,1,8.67,"1/36"],"Rahmanullah Gurbaz":["BAT",18,363,81,21.4,134.9,2,0,0,null,null],"Rahul Chahar":["BOWL",80,129,25,8.1,104.0,0,0,75,7.78,"4/27"],"Rahul Tewatia":["BAT",124,1302,68,23.7,138.1,2,0,32,7.91,"3/18"],"Rahul Tripathi":["BAT",100,2291,93,26.0,137.8,12,0,0,12.0,null],"Raj Angad Bawa":["BOWL",8,35,16,11.7,109.4,0,0,2,12.5,"1/11"],"Rajat Patidar":["BAT",57,1612,112,33.6,164.5,14,1,0,null,null],"Rajvardhan Hangargekar":["BOWL",2,0,0,null,null,0,0,3,10.0,"3/36"],"Ramakrishna Ghosh":["BOWL",1,0,0,null,null,0,0,1,8.0,"1/24"],"Ramandeep Singh":["BAT",38,299,35,18.7,145.9,0,0,7,10.07,"3/20"],"Rashid Khan":["BOWL",153,635,79,13.8,156.4,1,0,179,7.28,"4/24"],"Ravi Bishnoi":["BOWL",86,45,13,3.8,65.2,0,0,83,8.36,"4/41"],"Ravi Singh":["BAT",1,4,4,4.0,200.0,0,0,0,null,null],"Ravichandran Ashwin":["BOWL",219,833,50,13.0,118.2,1,0,187,7.2,"4/34"],"Ravindra Jadeja":["AR",267,3526,77,29.1,130.6,5,0,180,7.71,"5/16"],"Reece Topley":["BOWL",6,3,3,null,50.0,0,0,5,11.1,"2/27"],"Rinku Singh":["BAT",72,1398,83,34.1,146.2,6,0,0,null,null],"Rishabh Pant":["WK",139,3879,128,33.7,146.7,20,2,0,null,null],"Rishi Dhawan":["BOWL",39,210,25,19.1,112.3,0,0,25,8.08,"2/14"],"Riyan Parag":["BAT",97,1879,95,25.4,144.3,9,0,9,9.69,"1/5"],"Robin Minz":["BAT",4,12,5,4.0,63.2,0,0,0,null,null],"Robin Uthappa":["WK",205,4954,88,27.5,130.3,27,0,0,null,null],"Rohit Sharma":["BAT",281,7331,109,29.8,132.9,49,2,15,8.02,"4/6"],"Romario Shepherd":["BOWL",33,268,53,24.4,175.2,1,0,17,11.77,"3/54"],"Rovman Powell":["BAT",39,555,67,22.2,142.3,1,0,1,11.67,"1/18"],"Ruturaj Gaikwad":["BAT",85,2839,108,38.4,135.6,22,2,0,null,null],"Ryan Rickelton":["WK",26,836,123,34.8,168.2,5,1,0,null,null],"S Sreesanth":["BOWL",44,34,15,8.5,61.8,0,0,40,8.14,"3/29"],"Sachin Baby":["BAT",20,144,33,16.0,122.0,0,0,2,4.8,"2/4"],"Sahil Parakh":["BAT",4,46,24,11.5,139.4,0,0,0,null,null],"Sai Sudharsan":["BAT",57,2515,108,48.4,149.2,20,3,0,null,null],"Sakib Hussain":["BOWL",11,5,5,null,71.4,0,0,15,9.45,"4/24"],"Salil Arora":["BAT",1,35,35,35.0,166.7,0,0,0,null,null],"Sam Curran":["AR",64,997,88,24.9,136.4,6,0,59,9.74,"4/11"],"Sameer Rizvi":["BAT",25,424,90,30.3,144.7,3,0,0,null,null],"Sandeep Sharma":["BOWL",142,60,9,10.0,80.0,0,0,151,8.17,"5/18"],"Sanju Samson":["WK",190,5181,119,31.6,141.1,27,5,0,null,null],"Sarfaraz Khan":["BAT",58,746,67,22.6,137.4,2,0,0,18.0,null],"Saurabh Tiwary":["BAT",92,1494,61,28.7,120.1,8,0,0,null,null],"Shadab Jakati":["BOWL",59,28,13,28.0,96.6,0,0,47,8.02,"4/22"],"Shahbaz Nadeem":["BOWL",72,39,6,2.8,44.8,0,0,48,7.56,"3/16"],"Shahrukh Khan":["BAT",64,775,58,20.4,147.9,2,0,1,9.33,"1/13"],"Shaik Rasheed":["BAT",5,71,27,14.2,112.7,0,0,0,null,null],"Shamar Joseph":["BOWL",1,0,0,null,null,0,0,0,11.75,null],"Shardul Thakur":["BOWL",114,349,68,11.6,132.7,1,0,119,9.57,"4/34"],"Shashank Singh":["BAT",54,905,68,36.2,161.6,6,0,5,9.33,"2/20"],"Sheldon Jackson":["WK",9,61,16,10.2,107.0,0,0,0,null,null],"Sherfane Rutherford":["BAT",31,520,71,24.8,142.9,1,0,1,8.63,"1/6"],"Shikhar Dhawan":["BAT",222,6769,106,35.1,127.1,51,2,4,8.25,"1/7"],"Shimron Hetmyer":["BAT",94,1566,75,27.5,149.3,5,0,0,null,null],"Shivam Dube":["BAT",92,2129,95,31.3,145.4,10,0,6,10.79,"2/15"],"Shivam Mavi":["BOWL",32,51,20,5.7,91.1,0,0,30,8.71,"4/21"],"Shivang Kumar":["BOWL",13,53,27,8.8,115.2,0,0,9,9.62,"3/33"],"Shreevats Goswami":["WK",31,293,52,14.7,99.3,1,0,0,null,null],"Shreyas Gopal":["BOWL",52,180,24,12.9,106.5,0,0,52,8.17,"4/16"],"Shreyas Iyer":["BAT",147,4233,101,35.6,136.8,32,1,0,7.0,null],"Shubham Dubey":["BAT",20,220,34,22.0,153.8,0,0,0,null,null],"Shubman Gill":["BAT",134,4598,129,40.3,142.1,32,5,0,null,null],"Siddharth Trivedi":["BOWL",76,42,9,6.0,71.2,0,0,65,7.59,"4/25"],"Simarjeet Singh":["BOWL",14,10,3,3.3,66.7,0,0,11,10.0,"3/26"],"Spencer Johnson":["BOWL",12,8,5,8.0,66.7,0,0,7,10.33,"2/25"],"Sudeep Tyagi":["BOWL",14,3,3,3.0,75.0,0,0,6,8.47,"2/18"],"Sunil Narine":["BOWL",201,1820,109,17.5,165.3,7,1,209,6.79,"5/19"],"Suresh Raina":["BAT",204,5536,100,32.4,136.8,39,1,25,7.39,"2/0"],"Suryakumar Yadav":["BAT",179,4581,103,33.4,148.5,31,2,0,8.0,null],"Suryansh Shedge":["BAT",12,165,57,23.6,163.4,1,0,0,13.33,null],"Sushant Mishra":["BOWL",2,1,1,null,33.3,0,0,2,10.58,"2/21"],"Suyash Sharma":["BOWL",39,0,0,null,null,0,0,27,8.89,"3/17"],"Swapnil Singh":["BOWL",14,51,15,10.2,113.3,0,0,7,8.93,"2/28"],"T Natarajan":["BOWL",74,4,3,null,57.1,0,0,73,9.19,"4/19"],"Tejasvi Dahiya":["BAT",2,12,11,6.0,80.0,0,0,0,null,null],"Tilak Varma":["BAT",68,1858,101,35.7,144.7,10,1,0,7.64,null],"Tim David":["BAT",66,1151,70,32.9,177.1,2,0,0,18.0,null],"Tim Seifert":["WK",6,45,21,7.5,109.8,0,0,0,null,null],"Tom Banton":["BAT",2,18,10,9.0,90.0,0,0,0,null,null],"Travis Head":["BAT",53,1556,102,32.4,170.1,10,1,3,11.25,"2/30"],"Trent Boult":["BOWL",124,93,17,9.3,109.4,0,0,145,8.51,"4/18"],"Tripurana Vijay":["BOWL",1,0,0,null,null,0,0,0,14.5,null],"Tristan Stubbs":["WK",47,986,71,39.4,151.9,5,0,4,11.5,"2/11"],"Tushar Deshpande":["BOWL",53,54,25,13.5,150.0,0,0,55,10.09,"4/27"],"Umran Malik":["BOWL",26,23,19,11.5,143.8,0,0,29,9.36,"5/25"],"Urvil Patel":["BAT",10,197,65,19.7,205.2,1,0,0,null,null],"Vaibhav Arora":["BOWL",43,10,2,2.5,37.0,0,0,47,9.72,"3/27"],"Vaibhav Suryavanshi":["BAT",23,1028,103,44.7,229.0,6,2,0,null,null],"Varun Chakravarthy":["BOWL",94,31,10,5.2,58.5,0,0,111,7.71,"5/20"],"Venkatesh Iyer":["BAT",68,1677,104,31.6,142.0,13,1,3,10.59,"2/29"],"Vignesh Puthur":["BOWL",5,0,0,null,null,0,0,6,9.08,"3/32"],"Vijay Shankar":["BAT",78,1233,69,26.2,129.8,7,0,9,8.67,"2/19"],"Vipraj Nigam":["BOWL",19,157,39,19.6,176.4,0,0,13,9.77,"2/18"],"Virat Kohli":["BAT",282,9346,113,40.5,134.9,68,9,4,8.8,"2/25"],"Vishnu Vinod":["WK",7,71,30,11.8,109.2,0,0,0,null,null],"Washington Sundar":["AR",83,888,55,20.7,135.4,3,0,40,7.77,"3/16"],"Will Jacks":["AR",28,602,100,27.4,158.8,2,1,10,9.86,"2/14"],"Xavier Bartlett":["BOWL",13,40,18,20.0,142.9,0,0,7,11.13,"2/9"],"Yash Dayal":["BOWL",43,4,3,1.3,44.4,0,0,41,9.56,"3/20"],"Yash Raj Punja":["BOWL",8,0,0,null,null,0,0,9,9.3,"2/35"],"Yash Thakur":["BOWL",22,0,0,null,null,0,0,27,10.6,"5/30"],"Yashasvi Jaiswal":["BAT",82,2593,124,33.2,152.8,18,2,0,36.0,null],"Yudhvir Singh":["BOWL",9,22,14,5.5,137.5,0,0,8,10.88,"3/46"],"Yuzvendra Chahal":["BOWL",189,37,8,5.3,43.0,0,0,233,8.05,"5/40"],"Zeeshan Ansari":["BOWL",10,0,0,null,null,0,0,6,9.84,"3/42"],"Wanindu Hasaranga":["BOWL",37,81,18,5.4,92.0,0,0,46,8.41,"5/18"],"Rasikh Dar":["BOWL",25,43,10,8.6,102.4,0,0,29,10.01,"4/24"],"Thisara Perera":["AR",37,424,40,19.3,137.2,0,0,31,8.73,"3/20"],"Ross Taylor":["BAT",55,1017,81,25.4,123.7,3,0,0,12.0,null],"Kamindu Mendis":["AR",5,92,32,23.0,133.3,0,0,2,8.57,"1/4"],"Finn Allen":["BAT",11,349,100,34.9,214.1,1,1,0,null,null],"Prabhsimran Singh":["WK",66,1865,103,29.6,156.9,14,1,0,null,null],"Vyshak Vijaykumar":["BOWL",26,16,13,8.0,100.0,0,0,26,10.47,"3/20"],"Vinay Kumar":["BOWL",104,310,26,11.1,113.1,0,0,105,8.42,"4/40"],"Satyanarayana Raju":["BOWL",2,1,1,null,100.0,0,0,1,13.25,"1/40"],"Aman Khan":["BAT",12,115,51,12.8,110.6,1,0,0,13.0,null],"Mukul Choudhary":["BAT",10,170,54,28.3,141.7,1,0,0,null,null],"Digvesh Singh":["BOWL",23,3,2,3.0,37.5,0,0,19,9.08,"2/30"],"Auqib Nabi Dar":["BOWL",5,14,10,14.0,350.0,0,0,0,11.46,null],"Shahbaz Ahamad":["BOWL",63,603,59,20.8,123.3,1,0,27,9.79,"3/7"]};
+const STATS={"AM Ghazanfar":["BOWL",11,2,2,null,66.7,0,0,15,10.02,"2/17"],"Aaron Finch":["BAT",92,2092,88,24.9,128.0,15,0,1,9.35,"1/11"],"Abdul Samad":["BAT",71,859,45,19.1,148.6,0,0,2,13.16,"1/9"],"Abhimanyu Mithun":["BOWL",16,34,11,6.8,130.8,0,0,7,9.83,"2/37"],"Abhinandan Singh":["BOWL",3,0,0,null,null,0,0,3,12.62,"2/30"],"Abhinav Manohar":["BAT",27,292,43,15.4,124.3,0,0,0,null,null],"Abhishek Sharma":["BAT",92,2379,141,29.4,171.3,13,2,11,9.04,"2/4"],"Abishek Porel":["BAT",36,769,65,25.6,145.4,4,0,0,null,null],"Adam Milne":["BOWL",11,25,15,6.2,80.6,0,0,7,9.73,"2/21"],"Adam Zampa":["BOWL",22,15,7,3.0,62.5,0,0,31,8.38,"6/19"],"Aiden Markram":["BAT",69,1671,68,29.8,135.4,10,0,6,9.61,"2/30"],"Ajinkya Rahane":["BAT",212,5367,105,30.2,125.6,35,2,1,5.0,"1/5"],"Akash Deep":["BOWL",14,25,17,8.3,178.6,0,0,10,11.83,"3/45"],"Akash Madhwal":["BOWL",17,8,4,null,57.1,0,0,23,10.06,"5/5"],"Akash Singh":["BOWL",12,0,0,null,null,0,0,13,9.86,"3/26"],"Akeal Hosein":["BOWL",8,21,16,null,161.5,0,0,9,8.3,"4/17"],"Akshat Raghuwanshi":["BAT",3,29,18,14.5,116.0,0,0,0,null,null],"Andre Russell":["AR",139,2655,88,27.9,174.1,12,0,123,9.51,"5/15"],"Andrew Tye":["BOWL",30,91,25,10.1,119.7,0,0,42,8.57,"5/17"],"Angkrish Raghuvanshi":["WK",35,885,82,34.0,145.6,7,0,0,null,null],"Aniket Verma":["BAT",24,315,74,21.0,160.7,1,0,0,null,null],"Ankit Rajpoot":["BOWL",29,26,8,5.2,63.4,0,0,24,9.2,"5/14"],"Anrich Nortje":["BOWL",49,49,23,7.0,98.0,0,0,61,9.09,"3/33"],"Anshul Kamboj":["BOWL",25,74,19,24.7,142.3,0,0,31,9.97,"3/13"],"Anuj Rawat":["BAT",24,318,66,19.9,119.1,1,0,0,null,null],"Anukul Roy":["BOWL",25,78,29,9.8,121.9,0,0,15,8.9,"2/19"],"Anureet Singh":["BOWL",23,36,15,9.0,76.6,0,0,18,9.07,"3/23"],"Arjun Tendulkar":["BOWL",6,18,13,18.0,128.6,0,0,4,9.28,"1/9"],"Arshad Khan":["BOWL",26,142,58,23.7,149.5,1,0,18,11.03,"3/22"],"Arshdeep Singh":["BOWL",97,32,10,5.3,68.1,0,0,111,9.19,"5/32"],"Arshin Kulkarni":["BAT",4,26,17,6.5,78.8,0,0,0,null,null],"Asad Pathan":["BOWL",8,39,14,7.8,169.6,0,0,0,9.69,null],"Ashok Sharma":["BOWL",6,1,1,null,25.0,0,0,6,10.86,"2/32"],"Ashutosh Sharma":["BAT",32,564,66,29.7,168.9,2,0,0,null,null],"Ashwani Kumar":["BOWL",10,1,1,null,16.7,0,0,17,10.95,"4/24"],"Atharva Taide":["BAT",10,260,66,26.0,146.9,2,0,0,24.0,null],"Avesh Khan":["BOWL",82,68,19,17.0,158.1,0,0,93,9.28,"4/24"],"Axar Patel":["AR",177,2089,66,21.5,133.7,4,0,139,7.43,"4/21"],"Ayush Badoni":["BAT",66,1178,74,25.6,140.9,7,0,4,9.22,"2/4"],"Ayush Mhatre":["BAT",13,441,94,33.9,183.8,3,0,0,null,null],"Azmatullah Omarzai":["BOWL",20,151,38,15.1,149.5,0,0,15,9.63,"2/27"],"Ben Dunk":["BAT",3,40,20,13.3,114.3,0,0,0,null,null],"Ben Dwarshuis":["BOWL",1,0,0,null,null,0,0,1,12.75,"1/51"],"Bharath Chipli":["BAT",23,280,61,18.7,111.6,1,0,0,20.0,null],"Bhuvneshwar Kumar":["BOWL",206,354,27,9.3,93.9,0,0,226,7.71,"5/19"],"Bipul Sharma":["BOWL",33,187,35,23.4,152.0,0,0,17,8.06,"2/13"],"Brijesh Sharma":["BOWL",13,2,1,null,50.0,0,0,14,9.89,"2/18"],"Cameron Green":["AR",43,1029,100,38.1,151.1,4,1,23,9.44,"2/12"],"Carlos Brathwaite":["AR",16,181,43,13.9,163.1,0,0,13,8.95,"3/47"],"Chris Gayle":["BAT",141,4997,175,39.7,149.3,32,6,18,7.9,"3/21"],"Cooper Connolly":["BAT",14,491,107,44.6,163.1,2,1,0,null,null],"Corbin Bosch":["AR",9,97,32,32.3,154.0,0,0,13,9.2,"4/26"],"Danish Malewar":["BAT",2,2,2,1.0,40.0,0,0,0,null,null],"Darshan Nalkande":["BOWL",6,12,12,6.0,100.0,0,0,6,10.57,"2/21"],"David Miller":["BAT",152,3288,101,35.4,139.4,14,1,0,null,null],"Deepak Chahar":["BOWL",103,142,39,14.2,137.9,0,0,96,8.3,"4/13"],"Deepak Hooda":["BAT",125,1497,64,17.6,127.6,8,0,10,8.64,"2/16"],"Devdutt Padikkal":["BAT",90,2270,101,26.7,133.1,14,1,0,null,null],"Devon Conway":["BAT",29,1080,92,43.2,139.7,11,0,0,null,null],"Dewald Brevis":["BAT",27,606,57,25.2,146.0,2,0,1,16.0,"1/8"],"Dhruv Jurel":["WK",57,1195,81,31.4,154.2,10,0,0,null,null],"Dinesh Karthik":["WK",257,4843,97,26.3,135.3,22,0,0,null,null],"Donovan Ferreira":["BAT",18,326,69,27.2,170.7,2,0,1,13.67,"1/14"],"Dushmantha Chameera":["BOWL",21,53,17,13.2,117.8,0,0,13,9.82,"2/17"],"Eshan Malinga":["BOWL",22,7,5,7.0,41.2,0,0,33,9.2,"4/32"],"Faf du Plessis":["BAT",154,4773,96,35.1,135.8,39,0,0,16.0,null],"Faiz Fazal":["BAT",12,183,45,18.3,105.8,0,0,0,10.0,null],"Fazalhaq Farooqi":["BOWL",12,5,2,null,33.3,0,0,6,10.32,"2/32"],"Gerald Coetzee":["BOWL",14,31,12,5.2,93.9,0,0,15,10.37,"4/34"],"Glenn Maxwell":["AR",141,2820,95,23.9,155.1,18,0,41,8.3,"2/15"],"Glenn Phillips":["BAT",14,132,25,12.0,121.1,0,0,2,8.0,"1/10"],"Gurjapneet Singh":["BOWL",8,0,0,null,null,0,0,4,9.26,"1/7"],"Gurkeerat Singh":["WK",41,511,65,21.3,121.1,2,0,5,7.46,"2/15"],"Gurnoor Brar":["BOWL",1,0,0,null,null,0,0,0,14.0,null],"Harbhajan Singh":["BOWL",163,833,64,15.1,137.9,1,0,150,7.08,"5/18"],"Hardik Pandya":["AR",162,2964,91,27.7,146.4,10,0,82,9.36,"5/36"],"Harpreet Brar":["BOWL",51,249,29,20.8,120.9,0,0,37,8.0,"4/30"],"Harry Brook":["BAT",11,190,100,21.1,123.4,0,1,0,null,null],"Harsh Dubey":["BOWL",11,13,9,6.5,144.4,0,0,13,10.19,"3/12"],"Harshal Patel":["BOWL",123,280,36,8.8,117.6,0,0,151,8.92,"5/27"],"Harshit Rana":["BOWL",33,59,34,9.8,105.4,0,0,40,9.51,"3/24"],"Hashim Amla":["BAT",16,577,104,44.4,141.8,3,2,0,null,null],"Heinrich Klaasen":["WK",64,2104,105,42.1,166.7,13,2,0,null,null],"Himmat Singh":["BAT",9,92,40,30.7,133.3,0,0,0,null,null],"Iqbal Abdulla":["BOWL",49,88,33,44.0,104.8,0,0,40,7.23,"3/24"],"Irfan Pathan":["AR",103,1150,60,21.7,121.1,1,0,80,7.78,"3/24"],"Ishan Kishan":["WK",134,3600,106,30.5,143.5,23,1,0,24.0,null],"Ishant Sharma":["BOWL",117,57,10,9.5,82.6,0,0,96,8.38,"5/12"],"Isuru Udana":["BOWL",10,15,10,5.0,136.4,0,0,8,9.72,"2/41"],"Jacob Bethell":["BAT",9,163,55,18.1,140.5,1,0,0,null,null],"Jacob Duffy":["BOWL",6,0,0,null,null,0,0,9,10.96,"3/22"],"Jake Fraser-McGurk":["BAT",15,385,84,25.7,199.5,4,0,0,null,null],"Jamie Overton":["AR",13,151,43,30.2,162.4,0,0,14,9.76,"4/18"],"Jason Holder":["BOWL",57,324,47,12.5,123.2,0,0,70,8.58,"4/24"],"Jasprit Bumrah":["BOWL",158,75,16,9.4,87.2,0,0,190,7.34,"5/10"],"Javon Searles":["BOWL",4,8,6,8.0,133.3,0,0,2,12.71,"1/24"],"Jayant Yadav":["BOWL",20,40,23,10.0,111.1,0,0,8,6.85,"1/8"],"Jaydev Unadkat":["BOWL",116,201,26,12.6,118.9,0,0,114,8.94,"5/25"],"Jitesh Sharma":["WK",71,1107,85,23.1,152.5,1,0,0,null,null],"Jofra Archer":["BOWL",68,326,32,13.0,144.9,0,0,84,8.19,"3/14"],"Jos Buttler":["WK",138,4647,124,39.4,149.7,28,7,0,null,null],"Josh Hazlewood":["BOWL",52,19,7,19.0,63.3,0,0,72,8.62,"4/12"],"Josh Inglis":["WK",17,544,85,38.9,173.2,4,0,0,null,null],"KC Cariappa":["BOWL",11,24,12,8.0,114.3,0,0,8,9.67,"2/16"],"KL Rahul":["WK",160,5828,152,45.5,139.2,45,6,0,null,null],"Kagiso Rabada":["BOWL",101,262,44,13.1,109.6,0,0,151,8.77,"4/21"],"Kamlesh Nagarkoti":["BOWL",12,22,8,5.5,66.7,0,0,5,9.5,"2/13"],"Karim Janat":["BAT",1,0,0,null,null,0,0,0,30.0,null],"Karn Sharma":["BOWL",90,352,39,13.5,119.3,0,0,83,8.38,"4/16"],"Kartik Sharma":["BAT",11,295,71,32.8,136.6,2,0,0,null,null],"Kartik Tyagi":["BOWL",34,24,7,3.4,92.3,0,0,33,9.98,"3/22"],"Karun Nair":["BAT",86,1712,89,23.5,131.3,11,0,0,null,null],"Khaleel Ahmed":["BOWL",76,2,1,0.4,22.2,0,0,91,8.96,"3/21"],"Krunal Pandya":["AR",158,1982,86,22.8,133.8,3,0,107,7.57,"4/45"],"Kuldeep Sen":["BOWL",12,0,0,null,0.0,0,0,14,9.63,"4/20"],"Kuldeep Yadav":["BOWL",111,210,35,11.7,83.0,0,0,112,8.29,"4/14"],"Kulwant Khejroliya":["BOWL",9,0,0,null,null,0,0,6,11.01,"2/33"],"Kumar Kartikeya Singh":["BOWL",16,12,6,3.0,70.6,0,0,12,8.66,"2/22"],"Kumar Kushagra":["BAT",5,21,18,5.2,100.0,0,0,0,null,null],"Kunal Rathore":["BAT",1,0,0,0.0,0.0,0,0,0,null,null],"Kwena Maphaka":["BOWL",4,8,8,null,400.0,0,0,2,13.0,"1/23"],"Kyle Jamieson":["BOWL",15,77,16,15.4,105.5,0,0,16,10.12,"3/41"],"Lhuan-dre Pretorius":["BAT",2,7,7,3.5,87.5,0,0,0,null,null],"Liam Livingstone":["AR",51,1066,94,25.4,155.2,7,0,13,9.02,"3/27"],"Lizaad Williams":["BOWL",2,1,1,null,50.0,0,0,1,11.51,"1/37"],"Lockie Ferguson":["BOWL",52,72,24,24.0,153.2,0,0,54,9.19,"5/17"],"Luke Wood":["BOWL",2,9,9,null,300.0,0,0,1,15.5,"1/68"],"Lungi Ngidi":["BOWL",28,4,3,2.0,44.4,0,0,42,8.41,"4/10"],"M Siddharth":["BOWL",9,0,0,null,null,0,0,9,9.05,"2/35"],"MS Dhoni":["WK",277,5439,84,38.3,137.5,24,0,0,null,null],"Madhav Tiwari":["BOWL",5,21,18,21.0,175.0,0,0,4,9.18,"2/27"],"Maheesh Theekshana":["BOWL",38,17,7,5.7,50.0,0,0,36,8.27,"4/33"],"Mahipal Lomror":["BAT",40,527,54,18.2,141.3,1,0,1,8.47,"1/22"],"Manav Suthar":["BOWL",5,1,1,1.0,50.0,0,0,2,11.75,"1/19"],"Manish Pandey":["BAT",180,4021,114,29.4,122.0,22,1,0,null,null],"Manoj Bhandage":["BAT",1,1,1,1.0,25.0,0,0,0,null,null],"Marco Jansen":["BOWL",49,192,34,12.8,110.3,0,0,45,9.6,"3/17"],"Marcus Stoinis":["AR",123,2242,124,28.7,147.5,10,1,46,9.93,"4/15"],"Martin Guptill":["BAT",13,271,50,22.6,137.6,1,0,0,null,null],"Matheesha Pathirana":["BOWL",33,0,0,null,null,0,0,47,8.66,"4/28"],"Matt Henry":["BOWL",9,7,5,3.5,70.0,0,0,4,11.52,"2/54"],"Matthew Breetzke":["BAT",1,14,14,14.0,116.7,0,0,0,null,null],"Matthew Short":["BAT",9,177,36,19.7,123.8,0,0,0,8.93,null],"Mayank Markande":["BOWL",40,48,18,16.0,114.3,0,0,37,9.16,"4/15"],"Mayank Rawat":["BAT",1,0,0,null,null,0,0,0,null,null],"Mayank Yadav":["BOWL",10,5,5,5.0,100.0,0,0,9,10.15,"3/14"],"Mitchell Marsh":["AR",68,1855,117,30.9,148.5,12,2,37,8.52,"4/25"],"Mitchell Owen":["BAT",1,0,0,0.0,0.0,0,0,0,null,null],"Mitchell Santner":["BOWL",35,136,22,17.0,110.6,0,0,30,7.51,"3/11"],"Mitchell Starc":["BOWL",58,111,29,9.2,91.7,0,0,76,8.83,"5/35"],"Moeen Ali":["AR",73,1167,93,22.0,139.8,6,0,41,7.23,"4/26"],"Mohammed Shami":["BOWL",132,115,21,6.1,103.6,0,0,145,8.66,"4/11"],"Mohammed Siraj":["BOWL",125,117,14,9.8,84.2,0,0,128,8.78,"4/17"],"Mohit Rathee":["BOWL",1,1,1,null,50.0,0,0,0,14.5,null],"Mohit Sharma":["BOWL",120,125,21,6.9,91.9,0,0,134,8.77,"5/10"],"Mohsin Khan":["BOWL",31,25,13,5.0,89.3,0,0,38,8.41,"5/23"],"Monu Kumar":["BOWL",1,0,0,null,null,0,0,0,10.0,null],"Mukesh Choudhary":["BOWL",24,8,4,8.0,100.0,0,0,25,9.58,"4/46"],"Mukesh Kumar":["BOWL",42,10,6,10.0,55.6,0,0,42,10.59,"4/33"],"Musheer Khan":["BOWL",1,0,0,0.0,0.0,0,0,1,13.5,"1/27"],"Mustafizur Rahman":["BOWL",60,13,8,6.5,54.2,0,0,65,8.12,"4/29"],"Naman Dhir":["BAT",37,710,62,27.3,164.0,3,0,0,8.77,null],"Naman Ojha":["WK",113,1554,94,20.7,118.4,6,0,0,null,null],"Nandre Burger":["BOWL",18,14,10,14.0,155.6,0,0,21,9.67,"2/21"],"Nathan Ellis":["BOWL",17,19,12,4.8,76.0,0,0,19,8.67,"4/30"],"Nehal Wadhera":["BAT",45,784,70,23.8,140.0,4,0,0,7.76,null],"Nicholas Pooran":["WK",104,2527,87,30.4,163.8,15,0,0,null,null],"Nishant Sindhu":["BAT",8,63,22,12.6,126.0,0,0,0,null,null],"Nitish Kumar Reddy":["AR",42,787,76,29.1,145.5,3,0,13,10.65,"2/17"],"Nitish Rana":["BAT",127,3078,91,27.5,137.7,22,0,10,9.03,"2/11"],"Noor Ahmad":["BOWL",51,31,8,2.8,53.4,0,0,61,8.17,"4/18"],"Nuwan Thushara":["BOWL",8,0,0,null,null,0,0,9,9.43,"3/28"],"Parvez Rasool":["BOWL",11,17,10,8.5,85.0,0,0,4,8.21,"1/20"],"Parvinder Awana":["BOWL",33,5,4,2.5,35.7,0,0,39,8.27,"4/34"],"Pat Cummins":["BOWL",80,642,66,19.5,152.5,3,0,87,8.89,"4/34"],"Pathum Nissanka":["BAT",10,278,62,27.8,158.9,2,0,0,null,null],"Pawan Negi":["BOWL",50,365,36,14.0,126.3,0,0,34,7.87,"4/18"],"Pawan Suyal":["BOWL",5,0,0,null,null,0,0,2,9.44,"1/21"],"Phil Salt":["BAT",40,1258,89,34.0,174.5,12,0,0,null,null],"Piyush Chawla":["BOWL",192,624,24,11.1,110.8,0,0,192,7.96,"4/17"],"Praful Hinge":["BOWL",7,3,3,3.0,33.3,0,0,14,11.73,"4/34"],"Prashant Solanki":["BOWL",2,0,0,null,null,0,0,2,6.33,"2/20"],"Prashant Veer":["BAT",6,90,43,45.0,134.3,0,0,0,12.5,null],"Prasidh Krishna":["BOWL",78,15,6,5.0,48.4,0,0,91,8.99,"4/28"],"Pravin Dubey":["BOWL",5,23,16,23.0,69.7,0,0,2,8.54,"1/19"],"Prince Yadav":["BOWL",20,5,4,null,45.5,0,0,19,9.17,"3/32"],"Prithvi Shaw":["BAT",79,1892,99,23.9,147.5,14,0,0,null,null],"Priyansh Arya":["BAT",31,909,103,29.3,193.0,6,1,0,null,null],"Quinton de Kock":["WK",118,3444,140,31.0,134.9,24,3,0,null,null],"R Sai Kishore":["BOWL",28,18,13,4.5,112.5,0,0,33,8.99,"4/33"],"Rachin Ravindra":["BAT",18,413,65,24.3,143.9,2,0,0,3.5,null],"Raghu Sharma":["BOWL",6,0,0,null,null,0,0,1,8.67,"1/36"],"Rahmanullah Gurbaz":["BAT",18,363,81,21.4,134.9,2,0,0,null,null],"Rahul Chahar":["BOWL",80,129,25,8.1,104.0,0,0,75,7.78,"4/27"],"Rahul Tewatia":["BAT",124,1302,68,23.7,138.1,2,0,32,7.91,"3/18"],"Rahul Tripathi":["BAT",100,2291,93,26.0,137.8,12,0,0,12.0,null],"Raj Angad Bawa":["BOWL",8,35,16,11.7,109.4,0,0,2,12.5,"1/11"],"Rajat Patidar":["BAT",57,1612,112,33.6,164.5,14,1,0,null,null],"Rajvardhan Hangargekar":["BOWL",2,0,0,null,null,0,0,3,10.0,"3/36"],"Ramakrishna Ghosh":["BOWL",1,0,0,null,null,0,0,1,8.0,"1/24"],"Ramandeep Singh":["BAT",38,299,35,18.7,145.9,0,0,7,10.07,"3/20"],"Rashid Khan":["BOWL",153,635,79,13.8,156.4,1,0,179,7.28,"4/24"],"Ravi Bishnoi":["BOWL",86,45,13,3.8,65.2,0,0,83,8.36,"4/41"],"Ravi Singh":["BAT",1,4,4,4.0,200.0,0,0,0,null,null],"Ravichandran Ashwin":["BOWL",219,833,50,13.0,118.2,1,0,187,7.2,"4/34"],"Ravindra Jadeja":["AR",267,3526,77,29.1,130.6,5,0,180,7.71,"5/16"],"Reece Topley":["BOWL",6,3,3,null,50.0,0,0,5,11.1,"2/27"],"Rinku Singh":["BAT",72,1398,83,34.1,146.2,6,0,0,null,null],"Rishabh Pant":["WK",139,3879,128,33.7,146.7,20,2,0,null,null],"Rishi Dhawan":["BOWL",39,210,25,19.1,112.3,0,0,25,8.08,"2/14"],"Riyan Parag":["BAT",97,1879,95,25.4,144.3,9,0,9,9.69,"1/5"],"Robin Minz":["BAT",4,12,5,4.0,63.2,0,0,0,null,null],"Robin Uthappa":["WK",205,4954,88,27.5,130.3,27,0,0,null,null],"Rohit Sharma":["BAT",281,7331,109,29.8,132.9,49,2,15,8.02,"4/6"],"Romario Shepherd":["BOWL",33,268,53,24.4,175.2,1,0,17,11.77,"3/54"],"Rovman Powell":["BAT",39,555,67,22.2,142.3,1,0,1,11.67,"1/18"],"Ruturaj Gaikwad":["BAT",85,2839,108,38.4,135.6,22,2,0,null,null],"Ryan Rickelton":["WK",26,836,123,34.8,168.2,5,1,0,null,null],"S Sreesanth":["BOWL",44,34,15,8.5,61.8,0,0,40,8.14,"3/29"],"Sachin Baby":["BAT",20,144,33,16.0,122.0,0,0,2,4.8,"2/4"],"Sahil Parakh":["BAT",4,46,24,11.5,139.4,0,0,0,null,null],"Sai Sudharsan":["BAT",57,2515,108,48.4,149.2,20,3,0,null,null],"Sakib Hussain":["BOWL",11,5,5,null,71.4,0,0,15,9.45,"4/24"],"Salil Arora":["BAT",1,35,35,35.0,166.7,0,0,0,null,null],"Sam Curran":["AR",64,997,88,24.9,136.4,6,0,59,9.74,"4/11"],"Sameer Rizvi":["BAT",25,424,90,30.3,144.7,3,0,0,null,null],"Sandeep Sharma":["BOWL",142,60,9,10.0,80.0,0,0,151,8.17,"5/18"],"Sanju Samson":["WK",190,5181,119,31.6,141.1,27,5,0,null,null],"Sarfaraz Khan":["BAT",58,746,67,22.6,137.4,2,0,0,18.0,null],"Saurabh Tiwary":["BAT",92,1494,61,28.7,120.1,8,0,0,null,null],"Shadab Jakati":["BOWL",59,28,13,28.0,96.6,0,0,47,8.02,"4/22"],"Shahbaz Nadeem":["BOWL",72,39,6,2.8,44.8,0,0,48,7.56,"3/16"],"Shahrukh Khan":["BAT",64,775,58,20.4,147.9,2,0,1,9.33,"1/13"],"Shaik Rasheed":["BAT",5,71,27,14.2,112.7,0,0,0,null,null],"Shamar Joseph":["BOWL",1,0,0,null,null,0,0,0,11.75,null],"Shardul Thakur":["BOWL",114,349,68,11.6,132.7,1,0,119,9.57,"4/34"],"Shashank Singh":["BAT",54,905,68,36.2,161.6,6,0,5,9.33,"2/20"],"Sheldon Jackson":["WK",9,61,16,10.2,107.0,0,0,0,null,null],"Sherfane Rutherford":["BAT",31,520,71,24.8,142.9,1,0,1,8.63,"1/6"],"Shikhar Dhawan":["BAT",222,6769,106,35.1,127.1,51,2,4,8.25,"1/7"],"Shimron Hetmyer":["BAT",94,1566,75,27.5,149.3,5,0,0,null,null],"Shivam Dube":["BAT",92,2129,95,31.3,145.4,10,0,6,10.79,"2/15"],"Shivam Mavi":["BOWL",32,51,20,5.7,91.1,0,0,30,8.71,"4/21"],"Shivang Kumar":["BOWL",13,53,27,8.8,115.2,0,0,9,9.62,"3/33"],"Shreevats Goswami":["WK",31,293,52,14.7,99.3,1,0,0,null,null],"Shreyas Gopal":["BOWL",52,180,24,12.9,106.5,0,0,52,8.17,"4/16"],"Shreyas Iyer":["BAT",147,4233,101,35.6,136.8,32,1,0,7.0,null],"Shubham Dubey":["BAT",20,220,34,22.0,153.8,0,0,0,null,null],"Shubman Gill":["BAT",134,4598,129,40.3,142.1,32,5,0,null,null],"Siddharth Trivedi":["BOWL",76,42,9,6.0,71.2,0,0,65,7.59,"4/25"],"Simarjeet Singh":["BOWL",14,10,3,3.3,66.7,0,0,11,10.0,"3/26"],"Spencer Johnson":["BOWL",12,8,5,8.0,66.7,0,0,7,10.33,"2/25"],"Sudeep Tyagi":["BOWL",14,3,3,3.0,75.0,0,0,6,8.47,"2/18"],"Sunil Narine":["BOWL",201,1820,109,17.5,165.3,7,1,209,6.79,"5/19"],"Suresh Raina":["BAT",204,5536,100,32.4,136.8,39,1,25,7.39,"2/0"],"Suryakumar Yadav":["BAT",179,4581,103,33.4,148.5,31,2,0,8.0,null],"Suryansh Shedge":["BAT",12,165,57,23.6,163.4,1,0,0,13.33,null],"Sushant Mishra":["BOWL",2,1,1,null,33.3,0,0,2,10.58,"2/21"],"Suyash Sharma":["BOWL",39,0,0,null,null,0,0,27,8.89,"3/17"],"Swapnil Singh":["BOWL",14,51,15,10.2,113.3,0,0,7,8.93,"2/28"],"T Natarajan":["BOWL",74,4,3,null,57.1,0,0,73,9.19,"4/19"],"Tejasvi Dahiya":["BAT",2,12,11,6.0,80.0,0,0,0,null,null],"Tilak Varma":["BAT",68,1858,101,35.7,144.7,10,1,0,7.64,null],"Tim David":["BAT",66,1151,70,32.9,177.1,2,0,0,18.0,null],"Tim Seifert":["WK",6,45,21,7.5,109.8,0,0,0,null,null],"Tom Banton":["BAT",2,18,10,9.0,90.0,0,0,0,null,null],"Travis Head":["BAT",53,1556,102,32.4,170.1,10,1,3,11.25,"2/30"],"Trent Boult":["BOWL",124,93,17,9.3,109.4,0,0,145,8.51,"4/18"],"Tripurana Vijay":["BOWL",1,0,0,null,null,0,0,0,14.5,null],"Tristan Stubbs":["WK",47,986,71,39.4,151.9,5,0,4,11.5,"2/11"],"Tushar Deshpande":["BOWL",53,54,25,13.5,150.0,0,0,55,10.09,"4/27"],"Umran Malik":["BOWL",26,23,19,11.5,143.8,0,0,29,9.36,"5/25"],"Urvil Patel":["BAT",10,197,65,19.7,205.2,1,0,0,null,null],"Vaibhav Arora":["BOWL",43,10,2,2.5,37.0,0,0,47,9.72,"3/27"],"Vaibhav Suryavanshi":["BAT",23,1028,103,44.7,229.0,6,2,0,null,null],"Varun Chakravarthy":["BOWL",94,31,10,5.2,58.5,0,0,111,7.71,"5/20"],"Venkatesh Iyer":["BAT",68,1677,104,31.6,142.0,13,1,3,10.59,"2/29"],"Vignesh Puthur":["BOWL",5,0,0,null,null,0,0,6,9.08,"3/32"],"Vijay Shankar":["BAT",78,1233,69,26.2,129.8,7,0,9,8.67,"2/19"],"Vipraj Nigam":["BOWL",19,157,39,19.6,176.4,0,0,13,9.77,"2/18"],"Virat Kohli":["BAT",282,9346,113,40.5,134.9,68,9,4,8.8,"2/25"],"Vishnu Vinod":["WK",7,71,30,11.8,109.2,0,0,0,null,null],"Washington Sundar":["AR",83,888,55,20.7,135.4,3,0,40,7.77,"3/16"],"Will Jacks":["AR",28,602,100,27.4,158.8,2,1,10,9.86,"2/14"],"Xavier Bartlett":["BOWL",13,40,18,20.0,142.9,0,0,7,11.13,"2/9"],"Yash Dayal":["BOWL",43,4,3,1.3,44.4,0,0,41,9.56,"3/20"],"Yash Raj Punja":["BOWL",8,0,0,null,null,0,0,9,9.3,"2/35"],"Yash Thakur":["BOWL",22,0,0,null,null,0,0,27,10.6,"5/30"],"Yashasvi Jaiswal":["BAT",82,2593,124,33.2,152.8,18,2,0,36.0,null],"Yudhvir Singh":["BOWL",9,22,14,5.5,137.5,0,0,8,10.88,"3/46"],"Yuzvendra Chahal":["BOWL",189,37,8,5.3,43.0,0,0,233,8.05,"5/40"],"Zeeshan Ansari":["BOWL",10,0,0,null,null,0,0,6,9.84,"3/42"],"Wanindu Hasaranga":["BOWL",37,81,18,5.4,92.0,0,0,46,8.41,"5/18"],"Rasikh Dar":["BOWL",25,43,10,8.6,102.4,0,0,29,10.01,"4/24"],"Thisara Perera":["AR",37,424,40,19.3,137.2,0,0,31,8.73,"3/20"],"Ross Taylor":["BAT",55,1017,81,25.4,123.7,3,0,0,12.0,null],"Kamindu Mendis":["AR",5,92,32,23.0,133.3,0,0,2,8.57,"1/4"],"Finn Allen":["BAT",11,349,100,34.9,214.1,1,1,0,null,null],"Prabhsimran Singh":["WK",66,1865,103,29.6,156.9,14,1,0,null,null],"Vyshak Vijaykumar":["BOWL",26,16,13,8.0,100.0,0,0,26,10.47,"3/20"],"Vinay Kumar":["BOWL",104,310,26,11.1,113.1,0,0,105,8.42,"4/40"],"Satyanarayana Raju":["BOWL",2,1,1,null,100.0,0,0,1,13.25,"1/40"],"Aman Khan":["BAT",12,115,51,12.8,110.6,1,0,0,13.0,null],"Mukul Choudhary":["BAT",10,170,54,28.3,141.7,1,0,0,null,null],"Digvesh Singh":["BOWL",23,3,2,3.0,37.5,0,0,19,9.08,"2/30"],"Auqib Nabi Dar":["BOWL",5,14,10,14.0,350.0,0,0,0,11.46,null],"Shahbaz Ahamad":["BOWL",63,603,59,20.8,123.3,1,0,27,9.79,"3/7"],"David Warner":["BAT",184,6567,126,40.0,139.7,62,4,0,12.0,null],"Jonny Bairstow":["WK",52,1674,114,34.9,146.1,9,2,0,null,null],"Yash Dhull":["BAT",4,16,13,5.3,69.6,0,0,0,null,null],"Anmolpreet Singh":["BAT",9,139,36,15.4,120.9,0,0,0,null,null],"Kane Williamson":["BAT",79,2132,89,35.5,125.6,18,0,0,10.33,null],"Daryl Mitchell":["BAT",15,351,63,27.0,131.5,2,0,1,12.12,"1/18"],"K S Bharat":["WK",10,199,78,28.4,122.1,1,0,0,null,null],"Alex Carey":["BAT",3,32,14,16.0,110.3,0,0,0,null,null],"Shai Hope":["BAT",9,183,41,22.9,150.0,0,0,0,null,null],"Keshav Maharaj":["BOWL",2,1,1,1.0,50.0,0,0,2,6.5,"2/23"],"Mujeeb Ur Rahman":["BOWL",20,12,10,4.0,80.0,0,0,20,8.34,"3/27"],"Adil Rashid":["BOWL",3,22,18,11.0,137.5,0,0,2,9.1,"2/23"],"Vijayakanth Viyaskanth":["BOWL",3,7,7,null,140.0,0,0,1,8.6,"1/37"],"Ricky Bhui":["BAT",4,10,7,2.5,38.5,0,0,0,null,null],"Mayank Dagar":["BOWL",8,0,0,0.0,0.0,0,0,2,8.89,"1/23"],"Sanvir Singh":["BAT",6,25,8,12.5,119.0,0,0,0,null,null],"Saurav Chauhan":["BAT",3,18,9,6.0,120.0,0,0,0,null,null],"Tom Kohler-Cadmore":["BAT",3,48,20,16.0,88.9,0,0,0,null,null],"B R Sharath":["BAT",1,2,2,2.0,40.0,0,0,0,null,null],"Vidwath Kaverappa":["BOWL",1,0,0,null,null,0,0,2,9.0,"2/36"],"Himanshu Sharma":["BOWL",2,0,0,null,null,0,0,0,11.4,null],"Rilee Rossouw":["BAT",22,473,82,23.6,153.6,2,0,0,null,null],"Ashton Turner":["BAT",6,24,16,4.8,85.7,0,0,0,null,null],"Sam Billings":["WK",30,503,56,19.3,129.6,3,0,0,null,null],"Josh Philippe":["BAT",5,78,33,19.5,101.3,0,0,0,null,null],"Naveen Ul Haq":["BOWL",18,18,13,18.0,72.0,0,0,25,9.12,"4/38"],"Umesh Yadav":["BOWL",148,208,24,9.9,103.5,0,0,144,8.5,"4/23"],"Tabraiz Shamsi":["BOWL",5,2,2,null,50.0,0,0,3,9.05,"1/21"],"Priyam Garg":["BAT",23,273,51,15.2,113.3,1,0,0,null,null],"Tanush Kotian":["BAT",1,24,24,24.0,77.4,0,0,0,null,null],"Shams Mulani":["BOWL",2,1,1,null,100.0,0,0,0,11.4,null],"Shivam Singh":["BAT",1,2,2,null,66.7,0,0,0,null,null],"Lalit Yadav":["AR",27,305,48,19.1,105.2,0,0,10,8.85,"2/11"],"Basil Thampi":["BOWL",25,32,13,32.0,91.4,0,0,22,9.74,"3/29"],"Murugan Ashwin":["BOWL",44,35,9,3.9,70.0,0,0,35,8.01,"3/21"],"Raghav Goyal":["BOWL",1,0,0,null,null,0,0,0,8.25,null],"Jagadeesha Suchith":["BOWL",22,70,34,17.5,114.8,0,0,19,8.6,"2/12"],"Sediqullah Atal":["BAT",1,22,22,22.0,137.5,0,0,0,null,null],"Evin Lewis":["BAT",27,654,65,27.2,137.1,4,0,0,null,null],"Steve Smith":["BAT",103,2495,101,34.7,128.3,11,1,0,15.0,null],"Tom Curran":["BOWL",13,127,54,25.4,118.7,1,0,13,10.84,"3/29"],"Krishnappa Gowtham":["BOWL",36,247,33,13.7,166.9,0,0,21,8.24,"2/12"],"Mohammad Nabi":["BOWL",24,221,37,13.0,145.4,0,0,15,7.44,"4/11"],"Gulbadin Naib":["BAT",2,19,19,19.0,126.7,0,0,0,12.0,null],"Sikandar Raza":["AR",9,182,57,26.0,133.8,1,0,3,9.88,"1/18"],"Litton Das":["BAT",1,4,4,4.0,100.0,0,0,0,null,null],"Richard Gleeson":["BOWL",3,2,2,null,100.0,0,0,2,9.71,"1/30"],"Alzarri Joseph":["BOWL",22,27,15,27.0,84.4,0,0,21,9.55,"6/12"],"Virat Singh":["BAT",3,15,11,7.5,57.7,0,0,0,null,null],"Prerak Mankad":["BAT",6,97,64,32.3,132.9,1,0,0,null,null],"Narayan Jagadeesan":["BAT",13,162,39,18.0,110.2,0,0,0,null,null],"K M Asif":["BOWL",7,0,0,0.0,0.0,0,0,7,10.3,"2/42"],"Kuldip Yadav":["BOWL",3,0,0,null,0.0,0,0,2,9.33,"1/18"],"Sean Abbott":["BOWL",3,22,14,7.3,122.2,0,0,1,11.56,"1/47"],"Kyle Mayers":["BAT",13,379,73,29.2,144.1,4,0,0,8.43,null],"Jason Behrendorff":["BOWL",17,6,3,null,66.7,0,0,19,9.05,"3/23"],"Josh Little":["BOWL",11,0,0,null,null,0,0,11,8.92,"4/45"],"Jhye Richardson":["BOWL",4,17,15,5.7,65.4,0,0,3,10.47,"2/41"],"Manan Vohra":["BAT",56,1083,95,22.1,130.6,3,0,0,null,null],"Hritik Shokeen":["BOWL",13,66,25,22.0,101.5,0,0,5,9.24,"2/34"],"Ankit Singh Rajpoot":["BOWL",29,26,8,5.2,63.4,0,0,24,9.2,"5/14"],"Michael Bracewell":["AR",5,58,26,29.0,123.4,0,0,6,8.64,"2/13"],"Dilshan Madushanka":["BOWL",1,0,0,null,null,0,0,1,9.0,"1/36"],"William O'Rourke":["BOWL",3,0,0,null,null,0,0,6,12.77,"3/27"],"Chetan Sakariya":["BOWL",20,20,7,3.3,64.5,0,0,20,8.62,"3/31"],"Sandeep Warrier":["BOWL",10,0,0,null,null,0,0,8,9.04,"3/15"],"K C Cariappa":["BOWL",11,24,12,8.0,114.3,0,0,8,9.67,"2/16"],"Unmukt Chand":["BAT",21,300,58,15.0,100.0,1,0,0,null,null],"Baba Indrajith":["BAT",3,21,15,7.0,70.0,0,0,0,null,null],"Jimmy Neesham":["BOWL",14,92,22,10.2,98.9,0,0,8,9.28,"3/12"],"Daniel Sams":["BOWL",16,44,15,4.9,100.0,0,0,14,8.72,"4/30"],"Obed McCoy":["BOWL",8,8,8,8.0,160.0,0,0,11,9.22,"3/23"],"Abhijeet Tomar":["BAT",1,4,4,4.0,50.0,0,0,0,null,null],"Krish Bhagat":["BOWL",3,10,7,10.0,47.6,0,0,0,10.5,null],"Vivrant Sharma":["BAT",3,69,69,69.0,146.8,1,0,0,12.33,null],"Siddharth Kaul":["BOWL",55,20,7,5.0,55.6,0,0,58,8.63,"4/29"],"Chris Green":["BOWL",1,0,0,null,null,0,0,0,8.47,null],"Shakib Al Hasan":["AR",71,795,66,19.4,124.4,2,0,63,7.44,"3/17"],"Dwaine Pretorius":["BOWL",7,44,22,11.0,157.1,0,0,6,9.52,"2/30"],"Blessing Muzarabani":["BOWL",2,0,0,null,null,0,0,4,10.71,"4/41"],"Tim Southee":["BOWL",54,120,36,9.2,112.1,0,0,47,8.67,"3/20"],"S Midhun":["BOWL",1,0,0,null,null,0,0,0,13.5,null],"Chris Jordan":["BOWL",34,81,30,8.1,105.2,0,0,30,9.62,"4/11"],"Tymal Mills":["BOWL",10,8,6,2.0,57.1,0,0,11,9.85,"3/35"],"David Payne":["BOWL",2,6,6,null,120.0,0,0,2,14.0,"2/35"],"Ripal Patel":["BAT",9,80,23,16.0,109.6,0,0,0,7.33,null],"Michael Neser":["BOWL",1,0,0,null,null,0,0,0,15.5,null],"Wayne Parnell":["BOWL",33,65,16,6.5,81.2,0,0,35,7.78,"3/10"],"Keemo Paul":["BOWL",8,18,7,3.6,75.0,0,0,9,8.72,"3/17"],"Odean Smith":["BOWL",6,51,25,17.0,115.9,0,0,6,11.87,"4/30"],"Jalaj Saxena":["BOWL",1,0,0,null,null,0,0,0,9.0,null]};
 const ROLE_N={BAT:"Batter",BOWL:"Bowler",AR:"All-rounder",WK:"WK-Batter"};
 const statOf=n=>STATS[n]||null;
-function roleTag(n){const s=statOf(n);return s?`<span class="role ${s[0]}">${ROLE_N[s[0]]}</span>`:`<span class="role NA">No IPL stats</span>`}
+function roleTag(n){const s=statOf(n),r=s?s[0]:REG_ROLE[n];return r?`<span class="role ${r}">${ROLE_N[r]}</span>`:`<span class="role NA">No IPL stats</span>`}
 const nf=v=>v==null?"–":Number(v).toLocaleString("en-IN");
 function statLine(n){const s=statOf(n);if(!s)return"No IPL matches yet";const[r,m,ru,hs,av,sr,f,h,w,ec,bb]=s;
   const bat=`${nf(ru)} runs · SR ${sr??"–"}`,bowl=`${w} wkts · Econ ${ec??"–"}`;
@@ -1269,8 +1863,8 @@ function startEngine(mode,seed,len,humanCtrl,fmt){
   allTeams(M).forEach(k=>teams[k]={k,purse:M.purse,squad:[],ctrl:humanCtrl[k]?"human":"ai",nm:humanCtrl[k]?humanCtrl[k].nm:"",peer:humanCtrl[k]?humanCtrl[k].peer:null});
   if(M.retain)allTeams(M).forEach(k=>{const tm=teams[k];tm.purse=M.retData[k][0];tm.squad=pool.all.filter(p=>p.ret&&p.rk===k).map(p=>({p,price:p.value,ret:true}))});
   allTeams(M).forEach(k=>teams[k].start=teams[k].purse);
-  G={M,mode,fmt:fmt||"mega",seed,pool,teams,paused:false,rtmCards:M.rtm?Object.fromEntries(allTeams(M).map(k=>[k,M.rtmN(k)])):null,rtm:null,idx:0,lots:len==="quick"?Math.min(40,pool.length):pool.length,log:[],speed:1,lot:null,phase:"lot",ver:0,last:null};
-  UI.tab="log";UI.retSel={};
+  G={M,mode,fmt:fmt||"mega",seed,pool,teams,paused:false,rtmCards:M.rtm?Object.fromEntries(allTeams(M).map(k=>[k,M.rtmN(k)])):null,rtm:null,idx:0,lim:len==="quick"?40:len==="mid"?150:1e9,lots:Math.min(len==="quick"?40:len==="mid"?150:1e9,pool.length),log:[],speed:1,lot:null,phase:"lot",ver:0,last:null};
+  UI.tab="log";UI.retSel={};UI.setOpen=null;UI.setQ="";
   document.querySelectorAll("#gtabs button").forEach(x=>x.classList.toggle("on",x.dataset.t==="log"));
   $("speedBtn").textContent="Speed: Normal";
   if(M.pickRet){
@@ -1282,7 +1876,7 @@ function startEngine(mode,seed,len,humanCtrl,fmt){
   startLot();
 }
 /* ---------- mega retention phase: each human team picks up to 6 of its IPL 2024 players ---------- */
-function retCands(pool,k){return pool.filter(p=>p.rret?p.rk===k:p.prev===k&&PREV24[p.name]===k).sort((a,b)=>(b.rret?1:0)-(a.rret?1:0)||b.value-a.value).map(p=>p.i)}
+function retCands(pool,k){return pool.filter(p=>p.rret?p.rk===k:p.prev===k).sort((a,b)=>(b.rret?1:0)-(a.rret?1:0)||b.value-a.value).map(p=>p.i)}
 function retDefault(pool,k){return pool.filter(p=>p.rret&&p.rk===k).map(p=>p.i)}
 function retCosts(pool,list){let c=0;return list.map(i=>{const p=pool[i],un=UNCAP25.has(p.name),sl=un?4:(RET_SLABS[c++]||18);return p.rret?p.value:sl})}
 function retValid(pool,list){if(!Array.isArray(list)||list.length>6||new Set(list).size!==list.length)return false;let u=0,c=0;for(const i of list){const p=pool[i];if(!p)return false;UNCAP25.has(p.name)?u++:c++}return u<=2&&c<=5}
@@ -1309,7 +1903,7 @@ function retApply(){
     G.rtmCards[k]=6-list.length;
   });
   G.retSet=new Set(Object.values(G.teams).flatMap(t=>t.squad.map(s=>s.p.i)));
-  if(G.lots<G.pool.length){let n=0,i=0;for(;i<G.pool.length&&n<40;i++)if(!G.retSet.has(i))n++;G.lots=i}
+  if(G.lots<G.pool.length){let n=0,i=0;for(;i<G.pool.length&&n<G.lim;i++)if(!G.retSet.has(i))n++;G.lots=i}
   G.ret=null;G.phase="lot";show("s-game");
   if(G===myG)startLot();
 }
@@ -1513,7 +2107,7 @@ function render(){
     $("hudWrap").innerHTML=`<div class="strip">${V.my.map(k=>{const t=V.teams[k],T=M.teams[k];return `<div style="border-color:${T.c}">${crest(M,k,24)}<b>${k}</b>${fmt(t.purse)} · ${t.squad.length}/${M.max}</div>`}).join("")}</div>`;
   }else $("hudWrap").innerHTML=`<div class="hud"><div class="k"><b>Spectating</b><span>All teams are taken</span></div></div>`;
   $("prog").style.width=(V.idx/V.lots*100)+"%";
-  $("lotNo").textContent=`Lot ${Math.min(V.idx+1,V.lots)} of ${V.lots}${V.lots<V.pool.length?" (quick)":""}`;
+  $("lotNo").textContent=`Lot ${Math.min(V.idx+1,V.lots)} of ${V.lots}${V.lots<V.pool.length?" (short)":""}`;
   $("modeName").textContent=M.name+(NET?` · Room ${NET.code}`:"");
   if(p){
     $("pSet").textContent=p.set;
@@ -1522,7 +2116,7 @@ function render(){
       $("pAv").innerHTML=avatar(p,M,150);$("pAv").dataset.pi=key;
       const pc=$("pCard");pc.className="pcard "+tierOf(p.set);void pc.offsetWidth;pc.style.animation="none";void pc.offsetWidth;pc.style.animation="";
       $("pNo").textContent="#"+(p.i+1);
-      $("pReal").innerHTML=`${crest(M,p.rk,16)}${M.key==="legends"?esc(teamOf(M,p.rk).n):(M.key==="mini"?"IPL 2026: ":"IPL 2025: ")+esc(p.rk)}`;
+      $("pReal").innerHTML=`${crest(M,p.rk,16)}${M.key==="legends"?esc(teamOf(M,p.rk).n):(M.key==="mini"?"IPL 2026: ":"IPL 2025: ")+esc(p.uns?"Unsold":p.rk)}`;
     }
     $("pName").textContent=p.name;
     if($("pStats").dataset.n!==p.name){$("pStats").dataset.n=p.name;$("pRole").innerHTML=roleTag(p.name);$("pStats").innerHTML=statBoxes(p.name)}
@@ -1591,7 +2185,8 @@ function render(){
   $("speedBtn").style.display=NET?"none":"";
   $("pauseBtn").textContent=V.paused?"▶ Resume":"⏸ Pause";$("pauseBtn").classList.toggle("on",!!V.paused);
   const nx=V.pool.slice(V.idx+1,Math.min(V.lots,V.idx+4));
-  $("upNext").innerHTML=nx.length?"Up next:"+nx.map(x=>`<span style="display:inline-flex;align-items:center;gap:4px">${avatar(x,M,22)}<b>${esc(x.name)}</b></span>`).join(""):"";
+  if(M.sets){const c=V.pool[V.idx];const rest=c?V.pool.slice(V.idx+1,V.lots).filter(x=>x.sn===c.sn).length:0;$("upNext").dataset.s=rest}
+  $("upNext").innerHTML=nx.length?(M.sets&&V.pool[V.idx]?`<span style="color:var(--mu)">${+$("upNext").dataset.s} more in this set ·</span> `:"")+"Up next:"+nx.map(x=>`<span style="display:inline-flex;align-items:center;gap:4px">${avatar(x,M,22)}<b>${esc(x.name)}</b></span>`).join(""):"";
   if(UI.lastPanelVer!==V.ver){UI.lastPanelVer=V.ver;panel(V)}
 }
 $("autoRow").addEventListener("click",e=>{const b=e.target.closest("[data-auto]");if(!b)return;const V=view();if(!V)return;const k=b.dataset.auto;setAuto(k,!V.teams[k].auto)});
@@ -1665,11 +2260,33 @@ function loop(){
 }
 requestAnimationFrame(loop);
 
+$("panel").addEventListener("input",e=>{if(e.target.id==="setFind"){UI.setQ=e.target.value;const V=view();if(V)panel(V)}});
+$("panel").addEventListener("click",e=>{const b=e.target.closest(".sethead");if(!b)return;const sn=+b.dataset.sn;UI.setOpen=UI.setOpen===sn?-1:sn;const V=view();if(V)panel(V)});
 $("gtabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;UI.tab=b.dataset.t;document.querySelectorAll("#gtabs button").forEach(x=>x.classList.toggle("on",x===b));const V=view();if(V)panel(V)};
 function panel(V){
   const P=$("panel"),M=V.M,div=V.remote?100:1;
   if(UI.tab==="log"){
     P.innerHTML=V.log.length?V.log.slice(0,60).map(([pi,k,pr,rt])=>{const p=V.pool[pi];if(!p)return"";return k?`<div class="row">${avatar(p,M,28)}${chip(M,k)}<span class="n">${esc(p.name)}${rt?'<span class="tagx">RTM</span>':""}</span><span class="pr">${fmt(pr/div)}</span></div>`:`<div class="row">${avatar(p,M,28)}<span class="mini" style="background:#334155;color:#fff">—</span><span class="n uns">${esc(p.name)} · unsold</span></div>`}).join(""):`<div class="empty">Sales will appear here.</div>`;
+  }else if(UI.tab==="sets"){
+    const owner={};Object.values(V.teams).forEach(t=>t.squad.forEach(s=>owner[s.p.i]=[t.k,s.price,s.ret]));
+    const cur=V.pool[Math.min(V.idx,V.pool.length-1)],N=Math.min(V.lots,V.pool.length);
+    const row=(p)=>{const o=owner[p.i],past=p.i<V.idx&&!o,now=p.i===V.idx&&V.phase!=="end",away=p.i-V.idx;
+      const st=o?`${chip(M,o[0])} <span class="pr">${o[2]?"Retained":fmt(o[1])}</span>`:now?`<span class="tagx">NOW</span>`:past?`<span class="pr" style="color:var(--mu)">Unsold</span>`:`<span class="pr" style="color:var(--mu)">Base ${fmt(p.base)}</span>`;
+      return `<div class="row setrow ${now?"now":o||past?"past":""}">${avatar(p,M,28)}<span class="n">${esc(p.name)} ${roleTag(p.name)}${p.ct&&p.ct!=="IND"?` <span class="role NA">${esc(p.ct)}</span>`:""}<br><small style="color:var(--mu)">${M.sets?esc(p.set)+" · ":""}${o||past||now?statLine(p.name):away>0?"in "+away+" lot"+(away===1?"":"s"):""}</small></span>${st}</div>`};
+    const q=(UI.setQ||"").trim().toLowerCase();
+    let h=`<input class="setfind" id="setFind" placeholder="🔍 Find a player in this auction…" value="${esc(UI.setQ||"")}" autocomplete="off">`;
+    if(q){const hits=V.pool.slice(0,N).filter(p=>p.name.toLowerCase().includes(q)).slice(0,30);
+      h+=hits.length?hits.map(row).join(""):`<div class="empty">No player with that name in this auction.</div>`;
+    }else if(M.sets){
+      const groups=[];V.pool.slice(0,N).forEach(p=>{const g=groups[groups.length-1];if(g&&g.sn===p.sn)g.ps.push(p);else groups.push({sn:p.sn,name:p.set,ps:[p]})});
+      h+=groups.map(g=>{const left=g.ps.filter(p=>p.i>V.idx&&!owner[p.i]).length,isCur=cur&&g.sn===cur.sn&&V.phase!=="end",open=UI.setOpen===g.sn||(UI.setOpen==null&&isCur);
+        return `<button class="sethead ${isCur?"cur":""} ${!left&&!isCur?"done":""}" data-sn="${g.sn}"><b>${isCur?"▶ ":""}${esc(g.name)}</b><small>${isCur?"On now · ":""}${left?left+" to come":"done"} · ${g.ps.length} players</small><span>${open?"▾":"▸"}</span></button>`+(open?g.ps.map(row).join(""):"")}).join("");
+    }else{
+      const up=V.pool.slice(V.idx,Math.min(N,V.idx+40));
+      h+=`<div class="cap2" style="margin:4px 0 8px">UPCOMING PLAYERS</div>`+(up.length?up.map(row).join(""):`<div class="empty">No more players.</div>`);
+    }
+    const had=document.activeElement&&document.activeElement.id==="setFind",pos=had?document.activeElement.selectionStart:0;
+    P.innerHTML=h;if(had){const f=$("setFind");f.focus();try{f.setSelectionRange(pos,pos)}catch(e){}}
   }else if(UI.tab==="squad"){
     if(!V.my.length){P.innerHTML=`<div class="empty">You don't control a team.</div>`;return}
     P.innerHTML=V.my.map(k=>{const t=V.teams[k];return (V.my.length>1?`<div class="row" style="background:var(--p2)">${chip(M,k)}<b class="n">${esc(M.teams[k].n)}</b><span class="pr">${t.squad.length} players</span></div>`:"")+(t.squad.length?t.squad.map(s=>`<div class="row">${avatar(s.p,M,28)}<span class="n">${esc(s.p.name)}${s.ret?'<span class="tagx ret">RETAINED</span>':s.rtm?'<span class="tagx">RTM</span>':""}</span>${s.ret?"":`<span style="font-size:11px;color:${s.price<=s.p.value?"var(--green)":"var(--red)"}">${s.price<=s.p.value?"steal":"overpaid"}</span>`}<span class="pr">${fmt(s.price)}</span></div>`).join(""):`<div class="empty">No players yet. Get bidding!</div>`)}).join("");
@@ -1953,7 +2570,7 @@ function renderLobby(){
   $("lobbyWait").style.display=host?"none":"";
   if(!st){$("lobbyMode").textContent="Connecting to host…";$("lobbyTeams").innerHTML="";$("lobbyPeople").innerHTML="";return}
   const M=modeFor(st.m,st.fm);
-  $("lobbyMode").textContent=`${M.name} · ${st.ln==="quick"?"Quick (40 lots)":"Full"} · Host: ${st.host||""} · ${Object.keys(st.cl||{}).length}/${Math.min(MAXH,Object.keys(M.teams).length)} players${ROOM&&ROOM.relay?" · Server "+(NET.srv||SRV):""}`;
+  $("lobbyMode").textContent=`${M.name} · ${st.ln==="quick"?"Quick (40 lots)":st.ln==="mid"?"Medium (150 lots)":"Full"} · Host: ${st.host||""} · ${Object.keys(st.cl||{}).length}/${Math.min(MAXH,Object.keys(M.teams).length)} players${ROOM&&ROOM.relay?" · Server "+(NET.srv||SRV):""}`;
   const cl=st.cl||{};
   const myKey=host?"host":NET.myPeer;
   $("lobbyTeams").innerHTML=Object.entries(M.teams).map(([k,t])=>{const c=cl[k];const mine=c&&c[0]===myKey;return `<button class="tbtn ${mine?"on":c?"taken":""}" data-k="${k}" style="--tc:${t.c}">${crest(M,k,34)}${k}<small>${t.n}</small>${c?`<span class="who">${mine?"You":"👤 "+esc(c[1])}</span>`:`<span class="who" style="opacity:.6">🤖 CPU</span>`}</button>`}).join("");
