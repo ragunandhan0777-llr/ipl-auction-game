@@ -545,7 +545,7 @@ body:before{background-image:linear-gradient(rgba(255,255,255,.03) 1px,transpare
     <div class="whoami"><b id="mgrShow"></b><button id="mgrChange">CHANGE</button></div>
     <div id="h-create">
       <div class="lbl2">AUCTION</div>
-      <div class="seg3 two" id="hubPool"><button data-m="mega" class="on"><b>MEGA 2025</b><small>Pick 6 retentions + RTM</small></button><button data-m="megaopen"><b>MEGA · NO RETENTION</b><small>All 228 players · ₹120 Cr each</small></button><button data-m="mini"><b>MINI 2026</b><small>Retention + RTM</small></button><button data-m="legends"><b>LEGENDS</b><small>10 teams · ₹150 Cr</small></button></div>
+      <div class="seg3 two" id="hubPool"><button data-m="mega" class="on"><b>MEGA 2025</b><small>Pick 6 retentions + RTM</small></button><button data-m="megaopen"><b>MEGA · NO RETENTION</b><small>All 228 players · ₹130 Cr each</small></button><button data-m="mini"><b>MINI 2026</b><small>Retention + RTM</small></button><button data-m="legends"><b>LEGENDS</b><small>10 teams · ₹150 Cr</small></button></div>
       <div class="lbl2" id="hubTeamLbl">FRANCHISE</div><div class="cap2" id="hubTeamSub">CHOOSE THE TEAM YOU'LL MANAGE.</div>
       <div class="teamsel" id="hubTeams"></div>
       <div class="lbl2">FORMAT</div>
@@ -587,7 +587,7 @@ body:before{background-image:linear-gradient(rgba(255,255,255,.03) 1px,transpare
   <button class="back" data-back>← Back</button>
   <div class="lbl">1 · Choose auction</div>
   <div class="cards" id="modes">
-    <button class="card on" data-m="mega"><div class="ic">🏟️</div><div><b>Mega Auction</b><span>All 182 players from IPL 2025 · ₹120 Cr purse · up to 25 players</span></div></button>
+    <button class="card on" data-m="mega"><div class="ic">🏟️</div><div><b>Mega Auction</b><span>All 182 players from IPL 2025 · ₹130 Cr purse · up to 25 players</span></div></button>
     <button class="card" data-m="mini"><div class="ic">⚡</div><div><b>Mini Auction</b><span>77 players from IPL 2026 · real retained squads &amp; purses · 2 RTM cards per team</span></div></button>
     <button class="card" data-m="legends"><div class="ic">👑</div><div><b>Legends Auction</b><span>100 retired legends — Gayle, Raina, Bhajji, DK, Dhawan · 10 teams · ₹150 Cr purse</span></div></button>
   </div>
@@ -1735,8 +1735,8 @@ const RET25={"Matheesha Pathirana":"CSK","Ravi Bishnoi":"LSG","Andre Russell":"K
 Object.entries(MEGA_RET).forEach(([k,[,l]])=>l.split(";").forEach(x=>{const n=x.split("|")[0];if(!(n in RET25))RET25[n]=k}));
 const RTM_CARDS=2,RTM_MS=8000;
 const MODES={
-  mega:{key:"mega",sets:true,name:"Mega Auction 2025",teams:IPL_TEAMS,purse:120,pickRet:true,rtm:true,rtmN:()=>0,max:25,minFill:18,minBase:0.3,interest:0.5,cap:0.2},
-  megaopen:{key:"megaopen",sets:true,name:"Mega Auction · No Retention",teams:IPL_TEAMS,purse:120,max:25,minFill:18,minBase:0.3,interest:0.5,cap:0.2},
+  mega:{key:"mega",sets:true,name:"Mega Auction 2025",teams:IPL_TEAMS,purse:130,pickRet:true,rtm:true,rtmN:()=>0,max:25,minFill:18,minBase:0.3,interest:0.5,cap:0.2},
+  megaopen:{key:"megaopen",sets:true,name:"Mega Auction · No Retention",teams:IPL_TEAMS,purse:130,max:25,minFill:18,minBase:0.3,interest:0.5,cap:0.2},
   mini:{key:"mini",name:"Mini Auction 2026",teams:IPL_TEAMS,purse:30,retain:true,rtm:true,lockFmt:true,retData:MINI_RET,rtmN:()=>RTM_CARDS,max:25,minFill:0,minBase:0.3,interest:0.45,cap:0.4},
   legends:{key:"legends",name:"Legends Auction",teams:IPL_TEAMS,purse:150,max:25,minFill:8,minBase:0.3,interest:0.6,cap:0.16}
 };
