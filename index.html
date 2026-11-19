@@ -1883,9 +1883,9 @@ $("copyBtn").onclick=()=>{const txt=NET&&NET.code?inviteLink(NET.code):SITE_URL;
   try{navigator.clipboard.writeText(txt).then(ok,fb)}catch(x){fb()}};
 function ringUpd(frac,label,cls){$("ringC").style.strokeDashoffset=(119.4*(1-Math.max(0,Math.min(1,frac)))).toFixed(1);$("ringN").textContent=label;$("ring").className="ring "+cls}
 
-/* ---------- feedback: emailed straight to the game owner (FormSubmit, no login needed) ---------- */
-const FB_MAIL="ragunandhan0632@gmail.com";
-const FB_URL="https://formsubmit.co/ajax/"+FB_MAIL;
+/* ---------- feedback: emailed straight to the game owner (Web3Forms, no login needed) ---------- */
+const FB_URL="https://api.web3forms.com/submit";
+const FB_KEY="e2f40bec-d15f-49c3-9981-a35414cabecd";
 const FB={r:0,t:"Idea",from:"",busy:false};
 function fbOpen(from){FB.from=from||"";$("fbErr").textContent="";if(!$("fbName").value&&APP.nick)$("fbName").value=APP.nick;$("setSheet").classList.remove("on");$("fbSheet").classList.add("on")}
 document.addEventListener("click",e=>{const b=e.target.closest(".fbopen");if(b)fbOpen(b.dataset.fb)});
@@ -1906,15 +1906,12 @@ $("fbSend").onclick=async()=>{
   try{
     const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),15000);
     const r=await fetch(FB_URL,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},signal:ctl.signal,
-      body:JSON.stringify({_subject:subject,_template:"table",_captcha:"false",Name:nm||"anonymous",Rating:rating,Type:FB.t,Message:msg,Context:ctx})});
-    clearTimeout(tm);const j=await r.json().catch(()=>({}));ok=r.ok&&String(j.success)!=="false";
+      body:JSON.stringify({access_key:FB_KEY,subject,from_name:"IPL Auction Game",botcheck:"",Name:nm||"anonymous",Rating:rating,Type:FB.t,Message:msg,Context:ctx})});
+    clearTimeout(tm);const j=await r.json().catch(()=>({}));ok=r.ok&&j.success===true;
   }catch(x){ok=false}
   FB.busy=false;btn.disabled=false;btn.textContent="SEND FEEDBACK";
   if(ok){$("fbSheet").classList.remove("on");$("fbMsg").value="";FB.r=0;document.querySelectorAll("#fbStars button").forEach(x=>x.classList.remove("on"));toast("Thanks! Your feedback was sent ✓");return}
-  /* fallback: open the player's own mail app with everything filled in */
-  $("fbErr").textContent="Couldn't send directly. Opening your email app instead…";
-  const body=`Rating: ${rating}\nType: ${FB.t}\nFrom: ${nm||"anonymous"}\n\n${msg}\n\n---\n${ctx}`;
-  setTimeout(()=>{location.href="mailto:"+FB_MAIL+"?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body)},700);
+  $("fbErr").textContent="Couldn't send right now. Check your internet and tap Send again.";
 };
 
 /* ---------- player avatar (drawn, not a photo) ---------- */
