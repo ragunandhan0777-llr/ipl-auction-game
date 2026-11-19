@@ -510,6 +510,7 @@ body:before{background-image:linear-gradient(rgba(255,255,255,.03) 1px,transpare
 #fbName{margin-top:8px}
 .fberr{min-height:16px;color:#f87171;font-size:12px;margin-top:6px}
 .fbsend{width:100%;margin-top:4px;padding:15px;border:0;border-radius:16px;background:#10c98d;color:#03130c;font:900 15px Inter;letter-spacing:.5px}
+.fbsend:disabled{opacity:.6}
 .fbnote{color:var(--mu);font-size:11.5px;text-align:center;margin:10px 0 0;line-height:1.4}
 </style>
 </head>
@@ -740,7 +741,7 @@ body:before{background-image:linear-gradient(rgba(255,255,255,.03) 1px,transpare
   <input id="fbName" maxlength="40" placeholder="Your name (optional)" autocomplete="off">
   <div class="fberr" id="fbErr"></div>
   <button class="fbsend" id="fbSend">SEND FEEDBACK</button>
-  <p class="fbnote">Opens a pre-filled post on the game's GitHub page. Sign in to GitHub (free) and tap “Create” to send it.</p>
+  <p class="fbnote">Sent straight to the game's creator by email. No login needed.</p>
 </div></div>
 <div class="modal" id="modal"><div class="box"><b id="mT">Auto-finish the auction?</b><p id="mP">Computer teams will bid on all remaining players. Human players stop bidding.</p><div><button id="mNo" style="background:var(--p2);color:var(--tx)">Cancel</button><button id="mYes" style="background:var(--gold);color:#1a1400">Finish</button></div></div></div>
 
@@ -1882,25 +1883,38 @@ $("copyBtn").onclick=()=>{const txt=NET&&NET.code?inviteLink(NET.code):SITE_URL;
   try{navigator.clipboard.writeText(txt).then(ok,fb)}catch(x){fb()}};
 function ringUpd(frac,label,cls){$("ringC").style.strokeDashoffset=(119.4*(1-Math.max(0,Math.min(1,frac)))).toFixed(1);$("ringN").textContent=label;$("ring").className="ring "+cls}
 
-/* ---------- feedback: opens a pre-filled GitHub issue on the game's repo ---------- */
-const FB_REPO="https://github.com/ragunandhan0777-llr/ipl-auction-game/issues/new";
-const FB={r:0,t:"Idea",from:""};
+/* ---------- feedback: emailed straight to the game owner (FormSubmit, no login needed) ---------- */
+const FB_MAIL="ragunandhan0632@gmail.com";
+const FB_URL="https://formsubmit.co/ajax/"+FB_MAIL;
+const FB={r:0,t:"Idea",from:"",busy:false};
 function fbOpen(from){FB.from=from||"";$("fbErr").textContent="";if(!$("fbName").value&&APP.nick)$("fbName").value=APP.nick;$("setSheet").classList.remove("on");$("fbSheet").classList.add("on")}
 document.addEventListener("click",e=>{const b=e.target.closest(".fbopen");if(b)fbOpen(b.dataset.fb)});
 $("fbClose").onclick=()=>$("fbSheet").classList.remove("on");
 $("fbSheet").onclick=e=>{if(e.target.id==="fbSheet")$("fbSheet").classList.remove("on")};
 $("fbStars").onclick=e=>{const b=e.target.closest("[data-r]");if(!b)return;FB.r=+b.dataset.r;document.querySelectorAll("#fbStars button").forEach(x=>x.classList.toggle("on",+x.dataset.r<=FB.r))};
 $("fbType").onclick=e=>{const b=e.target.closest("[data-t]");if(!b)return;FB.t=b.dataset.t;document.querySelectorAll("#fbType button").forEach(x=>x.classList.toggle("on",x===b))};
-$("fbSend").onclick=()=>{
+$("fbSend").onclick=async()=>{
+  if(FB.busy)return;
   const msg=$("fbMsg").value.trim(),nm=$("fbName").value.trim().slice(0,40);
   if(msg.length<3){$("fbErr").textContent="Please write a short message first.";return}
   const V=(()=>{try{return view()}catch(x){return null}})();
   const ctx=[V?V.M.name:"",V?`lot ${Math.min(V.idx+1,V.lots)}/${V.lots}`:"",NET?"online room":APP.play==="local"?"pass & play":"solo",FB.from?"from "+FB.from:"",/Mobi|Android|iPhone/.test(navigator.userAgent)?"phone":"computer"].filter(Boolean).join(" · ");
-  const title=`[${FB.t}] ${msg.replace(/\s+/g," ").slice(0,60)}${msg.length>60?"…":""}`;
-  const body=`**Rating:** ${FB.r?"★".repeat(FB.r)+"☆".repeat(5-FB.r)+` (${FB.r}/5)`:"not given"}\n**Type:** ${FB.t}\n**From:** ${nm||"anonymous"}\n\n${msg}\n\n---\n_Sent from the IPL Auction Game feedback form · ${ctx}_`;
-  const url=FB_REPO+"?title="+encodeURIComponent(title)+"&body="+encodeURIComponent(body);
-  const w=window.open(url,"_blank");if(w){try{w.opener=null}catch(x){}}else location.href=url;
-  $("fbSheet").classList.remove("on");$("fbMsg").value="";toast("Thanks! Finish sending it on GitHub");
+  const rating=FB.r?"★".repeat(FB.r)+"☆".repeat(5-FB.r)+` (${FB.r}/5)`:"not given";
+  const subject=`IPL Auction feedback: [${FB.t}] ${msg.replace(/\s+/g," ").slice(0,50)}${msg.length>50?"…":""}`;
+  const btn=$("fbSend");FB.busy=true;btn.disabled=true;btn.textContent="SENDING…";$("fbErr").textContent="";
+  let ok=false;
+  try{
+    const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),15000);
+    const r=await fetch(FB_URL,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},signal:ctl.signal,
+      body:JSON.stringify({_subject:subject,_template:"table",_captcha:"false",Name:nm||"anonymous",Rating:rating,Type:FB.t,Message:msg,Context:ctx})});
+    clearTimeout(tm);const j=await r.json().catch(()=>({}));ok=r.ok&&String(j.success)!=="false";
+  }catch(x){ok=false}
+  FB.busy=false;btn.disabled=false;btn.textContent="SEND FEEDBACK";
+  if(ok){$("fbSheet").classList.remove("on");$("fbMsg").value="";FB.r=0;document.querySelectorAll("#fbStars button").forEach(x=>x.classList.remove("on"));toast("Thanks! Your feedback was sent ✓");return}
+  /* fallback: open the player's own mail app with everything filled in */
+  $("fbErr").textContent="Couldn't send directly. Opening your email app instead…";
+  const body=`Rating: ${rating}\nType: ${FB.t}\nFrom: ${nm||"anonymous"}\n\n${msg}\n\n---\n${ctx}`;
+  setTimeout(()=>{location.href="mailto:"+FB_MAIL+"?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body)},700);
 };
 
 /* ---------- player avatar (drawn, not a photo) ---------- */
